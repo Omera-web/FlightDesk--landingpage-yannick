@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlightDesk — Beta</title>
+<template id="__bundler_thumbnail" data-bg-color="#04080f">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <!-- Sky -->
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#03020a"/>
+        <stop offset="60%" stop-color="#0a1535"/>
+        <stop offset="85%" stop-color="#102a1a"/>
+        <stop offset="100%" stop-color="#04080f"/>
+      </linearGradient>
+    </defs>
+    <rect width="1200" height="800" fill="url(#sky)"/>
+    <!-- Stars -->
+    <circle cx="200" cy="80" r="2" fill="rgba(220,228,255,0.8)"/>
+    <circle cx="450" cy="50" r="1.5" fill="rgba(220,228,255,0.6)"/>
+    <circle cx="700" cy="90" r="2" fill="rgba(220,228,255,0.7)"/>
+    <circle cx="900" cy="60" r="1.5" fill="rgba(220,228,255,0.5)"/>
+    <circle cx="1050" cy="100" r="2" fill="rgba(220,228,255,0.8)"/>
+    <circle cx="150" cy="160" r="1.5" fill="rgba(220,228,255,0.5)"/>
+    <circle cx="350" cy="140" r="1" fill="rgba(220,228,255,0.6)"/>
+    <circle cx="600" cy="120" r="1.5" fill="rgba(220,228,255,0.7)"/>
+    <circle cx="850" cy="150" r="1" fill="rgba(220,228,255,0.5)"/>
+    <circle cx="1100" cy="130" r="2" fill="rgba(220,228,255,0.6)"/>
+    <!-- Aircraft silhouette -->
+    <g transform="translate(600,340) scale(1.8)">
+      <ellipse cx="0" cy="0" rx="170" ry="18" fill="#111e30"/>
+      <ellipse cx="-70" cy="-14" rx="55" ry="16" fill="#0a3060" opacity="0.7"/>
+      <polygon points="-30,-36 120,-14 120,-8 -16,8 -70,38 -80,38 -60,-8" fill="#162736"/>
+      <polygon points="140,-28 152,-88 170,-84 175,-24" fill="#1a2c44"/>
+      <polygon points="118,-84 132,-94 205,-86 206,-80 162,-77 125,-79" fill="#1a2c44"/>
+      <ellipse cx="-120" cy="-16" rx="40" ry="18" fill="rgba(0,207,239,0.4)"/>
+    </g>
+    <!-- Logo text -->
+    <text x="80" y="740" font-family="monospace" font-size="28" fill="#00cfef" letter-spacing="6" opacity="0.9">FLIGHTDESK</text>
+    <text x="82" y="770" font-family="monospace" font-size="14" fill="rgba(238,242,247,0.4)" letter-spacing="3">BETA PROGRAMME</text>
+    <!-- Cyan accent line -->
+    <rect x="0" y="755" width="1200" height="1" fill="rgba(0,207,239,0.12)"/>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600;800;900&family=Barlow+Condensed:wght@700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #04080f;
+    --bg2: #070d17;
+    --white: #eef2f7;
+    --amber: #f5a623;
+    --cyan: #00cfef;
+    --green: #00d68f;
+    --red: #ff3b50;
+    --muted: rgba(238,242,247,0.35);
+    --border: rgba(238,242,247,0.08);
+    --border-active: rgba(0,207,239,0.25);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── NAVBAR ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(4,8,15,0.85);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    color: var(--cyan);
+    text-transform: uppercase;
+  }
+  .nav-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse-green 2s ease-in-out infinite;
+  }
+  @keyframes pulse-green {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .nav-cta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--bg);
+    background: var(--cyan);
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background 0.2s, opacity 0.2s;
+  }
+  .nav-cta:hover { background: #00b8d4; }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative;
+    height: 100vh;
+    min-height: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 0 80px 80px;
+    overflow: hidden;
+  }
+
+  #horizon-canvas {
+    position: absolute;
+    top: 0; right: 0;
+    width: 55%;
+    height: 100%;
+    opacity: 0.9;
+  }
+
+  .hero-bg-lines {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right, var(--bg) 38%, transparent 65%),
+      linear-gradient(to top, rgba(4,8,15,0.6) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Grid overlay */
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image:
+      linear-gradient(rgba(0,207,239,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,207,239,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 700px;
+  }
+
+  .hero-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fade-up 0.6s 0.2s forwards;
+  }
+
+  h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(52px, 6vw, 96px);
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fade-up 0.7s 0.4s forwards;
+  }
+
+  .hero-sub {
+    font-size: clamp(18px, 2vw, 24px);
+    font-weight: 300;
+    color: var(--muted);
+    margin-bottom: 40px;
+    line-height: 1.4;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fade-up 0.7s 0.6s forwards;
+  }
+
+  .hero-cta-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fade-up 0.7s 0.8s forwards;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    color: var(--bg);
+    background: var(--cyan);
+    padding: 16px 32px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { background: #00b8d4; transform: translateX(3px); }
+  .btn-primary .arrow { font-size: 16px; }
+
+  .hero-scroll-hint {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    animation: fade-up 0.6s 1.4s forwards;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--cyan));
+    animation: scroll-anim 1.8s 1.4s ease-in-out infinite;
+  }
+  @keyframes scroll-anim {
+    0% { transform: scaleY(0); transform-origin: top; opacity: 1; }
+    50% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+    100% { transform: scaleY(1); transform-origin: bottom; opacity: 0; }
+  }
+
+  /* QR placeholder — hero bottom-right */
+  .qr-badge {
+    position: absolute;
+    bottom: 48px;
+    right: 48px;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fade-up 0.6s 1.6s forwards;
+  }
+  .qr-box {
+    width: 64px; height: 64px;
+    background: var(--white);
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .qr-box svg { width: 52px; height: 52px; }
+  .qr-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── SECTIONS COMMUNS ── */
+  section {
+    padding: 100px 80px;
+  }
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--cyan);
+  }
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(36px, 4vw, 64px);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+  .section-body {
+    font-size: 17px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 560px;
+  }
+
+  /* ── MANIFESTE ── */
+  #manifeste {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .manifeste-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 40px;
+    margin-bottom: 72px;
+    flex-wrap: wrap;
+  }
+  .phases-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .phase-card {
+    background: var(--bg);
+    padding: 40px 36px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .phase-card.visible { opacity: 1; transform: none; }
+  .phase-card:nth-child(2) { transition-delay: 0.1s; }
+  .phase-card:nth-child(3) { transition-delay: 0.2s; }
+
+  .phase-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .phase-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 20px;
+  }
+  .phase-body {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .phase-accent-line {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .phase-card:nth-child(1) .phase-accent-line { background: var(--amber); }
+  .phase-card:nth-child(2) .phase-accent-line { background: var(--cyan); }
+  .phase-card:nth-child(3) .phase-accent-line { background: var(--green); }
+
+  /* ── INSTRUMENTS ── */
+  #instruments {
+    border-bottom: 1px solid var(--border);
+  }
+  .instruments-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: end;
+    margin-bottom: 64px;
+  }
+  .instruments-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .instr-card {
+    background: var(--bg2);
+    padding: 36px 32px;
+    position: relative;
+    border-bottom: none;
+    cursor: default;
+    transition: background 0.25s;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s, transform 0.5s, background 0.25s;
+  }
+  .instr-card.visible { opacity: 1; transform: none; }
+  .instr-card:nth-child(2) { transition-delay: 0.08s; }
+  .instr-card:nth-child(3) { transition-delay: 0.16s; }
+  .instr-card:nth-child(4) { transition-delay: 0.24s; }
+  .instr-card:nth-child(5) { transition-delay: 0.32s; }
+  .instr-card:nth-child(6) { transition-delay: 0.40s; }
+  .instr-card:hover { background: rgba(0,207,239,0.04); }
+  .instr-card:hover .instr-border { background: var(--cyan); }
+
+  .instr-border {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: var(--border);
+    transition: background 0.25s;
+  }
+
+  .instr-id {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+  .instr-icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .instr-title {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 0.01em;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .instr-body {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+  .instr-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-top: 20px;
+  }
+  .instr-status::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+
+  /* ── ÉQUIPAGE ── */
+  #equipage {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+  }
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 60px;
+    max-width: 800px;
+  }
+  .team-card {
+    background: var(--bg);
+    padding: 44px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s, transform 0.6s;
+    position: relative;
+  }
+  .team-card.visible { opacity: 1; transform: none; }
+  .team-card:nth-child(2) { transition-delay: 0.15s; }
+  .team-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--border-active);
+  }
+  .team-role {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--amber);
+    text-transform: uppercase;
+  }
+  .team-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 32px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .team-desc {
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.6;
+  }
+  .team-linkedin {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--cyan);
+    text-decoration: none;
+    text-transform: uppercase;
+    margin-top: 8px;
+    transition: opacity 0.2s;
+  }
+  .team-linkedin:hover { opacity: 0.7; }
+
+  /* ── CTA FINAL ── */
+  #cta-final {
+    text-align: center;
+    padding: 120px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  #cta-final::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,207,239,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,207,239,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .cta-content {
+    position: relative;
+    z-index: 1;
+  }
+  .cta-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .cta-tag::before, .cta-tag::after {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--amber);
+  }
+  #cta-final .section-title {
+    font-size: clamp(44px, 6vw, 88px);
+    margin-bottom: 20px;
+  }
+  #cta-final .section-body {
+    font-size: 20px;
+    max-width: 420px;
+    margin: 0 auto 48px;
+    text-align: center;
+  }
+
+  .cta-final-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .limited-seats {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--amber);
+    text-transform: uppercase;
+    border: 1px solid rgba(245,166,35,0.3);
+    padding: 8px 16px;
+  }
+  .limited-seats::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 32px 80px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-logo {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    color: var(--cyan);
+    text-transform: uppercase;
+  }
+  .footer-copy {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fade-up {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    section { padding: 72px 24px; }
+    #hero { padding: 0 24px 72px; }
+    h1 { font-size: 48px; }
+    .phases-grid, .instruments-grid { grid-template-columns: 1fr; }
+    .team-grid { grid-template-columns: 1fr; max-width: 100%; }
+    .instruments-intro { grid-template-columns: 1fr; }
+    #hero { height: auto; padding-top: 140px; }
+    #horizon-canvas { width: 100%; height: 50%; top: auto; bottom: 0; opacity: 0.4; }
+    .hero-bg-lines { background: linear-gradient(to top, var(--bg) 30%, rgba(4,8,15,0.7) 70%); }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    .qr-badge { display: none; }
+    .manifeste-header { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">FlightDesk</span>
+  <div class="nav-status">
+    <span class="status-dot"></span>
+    Systèmes opérationnels
+  </div>
+  <a href="https://docs.google.com/forms/d/e/1FAIpQLSeAzRhdghZqplhfhZcYypTNL2aP4pqBozRb-XDa2KSsq0PeKA/viewform" target="_blank" class="nav-cta">Prendre son siège →</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <canvas id="horizon-canvas"></canvas>
+  <div class="hero-bg-lines"></div>
+
+  <!-- QR code (top-right) -->
+  <div class="qr-badge">
+    <div class="qr-box">
+      <!-- QR code SVG généré pour le lien Google Forms -->
+      <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" fill="#04080f">
+        <rect width="52" height="52" fill="white"/>
+        <!-- Top-left finder -->
+        <rect x="2" y="2" width="18" height="18" fill="#04080f"/>
+        <rect x="4" y="4" width="14" height="14" fill="white"/>
+        <rect x="6" y="6" width="10" height="10" fill="#04080f"/>
+        <!-- Top-right finder -->
+        <rect x="32" y="2" width="18" height="18" fill="#04080f"/>
+        <rect x="34" y="4" width="14" height="14" fill="white"/>
+        <rect x="36" y="6" width="10" height="10" fill="#04080f"/>
+        <!-- Bottom-left finder -->
+        <rect x="2" y="32" width="18" height="18" fill="#04080f"/>
+        <rect x="4" y="34" width="14" height="14" fill="white"/>
+        <rect x="6" y="36" width="10" height="10" fill="#04080f"/>
+        <!-- Data modules (stylized) -->
+        <rect x="22" y="2" width="4" height="4" fill="#04080f"/>
+        <rect x="28" y="2" width="4" height="4" fill="#04080f"/>
+        <rect x="22" y="8" width="4" height="4" fill="#04080f"/>
+        <rect x="22" y="14" width="4" height="4" fill="#04080f"/>
+        <rect x="28" y="8" width="4" height="8" fill="#04080f"/>
+        <rect x="22" y="22" width="4" height="4" fill="#04080f"/>
+        <rect x="28" y="22" width="4" height="4" fill="#04080f"/>
+        <rect x="34" y="22" width="4" height="4" fill="#04080f"/>
+        <rect x="40" y="22" width="8" height="4" fill="#04080f"/>
+        <rect x="22" y="28" width="10" height="4" fill="#04080f"/>
+        <rect x="34" y="28" width="4" height="4" fill="#04080f"/>
+        <rect x="40" y="28" width="8" height="4" fill="#04080f"/>
+        <rect x="22" y="34" width="4" height="4" fill="#04080f"/>
+        <rect x="28" y="34" width="8" height="4" fill="#04080f"/>
+        <rect x="22" y="40" width="4" height="4" fill="#04080f"/>
+        <rect x="28" y="40" width="4" height="8" fill="#04080f"/>
+        <rect x="34" y="40" width="8" height="4" fill="#04080f"/>
+        <rect x="44" y="34" width="4" height="4" fill="#04080f"/>
+        <rect x="40" y="40" width="4" height="8" fill="#04080f"/>
+        <rect x="46" y="40" width="4" height="4" fill="#04080f"/>
+      </svg>
+    </div>
+    <span class="qr-label">Formulaire<br>d'accès beta</span>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-label">Beta Programme - Accès limité</div>
+    <h1>On ne vend pas<br>de l'IA qui répond.</h1>
+    <p class="hero-sub">On vend de l'IA qui fait voler l'exécution.</p>
+    <div class="hero-cta-row">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSeAzRhdghZqplhfhZcYypTNL2aP4pqBozRb-XDa2KSsq0PeKA/viewform" target="_blank" class="btn-primary">
+        Prendre son siège <span class="arrow">→</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-scroll-hint">
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- MANIFESTE -->
+<section id="manifeste">
+  <div class="manifeste-header">
+    <div>
+      <div class="section-label">Manifeste</div>
+      <h2 class="section-title">Trois phases.<br>Zéro improvisation.</h2>
+    </div>
+    <p class="section-body">Comme un pilote qui ne vole pas à vue mais aux instruments, FlightDesk donne à vos équipes des agents IA qui exécutent avec la rigueur d'un cockpit d'avion.</p>
+  </div>
+  <div class="phases-grid">
+    <div class="phase-card">
+      <div class="phase-accent-line"></div>
+      <div class="phase-num">Phase 01 — Pré-vol</div>
+      <div class="phase-title">Préparer</div>
+      <p class="phase-body">Objectifs, contraintes, checklists. On ne décolle pas sans prérequis. Chaque workflow est cadré, validé, autorisé avant exécution.</p>
+    </div>
+    <div class="phase-card">
+      <div class="phase-accent-line"></div>
+      <div class="phase-num">Phase 02 — En vol</div>
+      <div class="phase-title">Exécuter</div>
+      <p class="phase-body">L'agent exécute. Autonomie supervisée. L'humain reste aux commandes — pas dans les détails, mais en maîtrise. Données en temps réel.</p>
+    </div>
+    <div class="phase-card">
+      <div class="phase-accent-line"></div>
+      <div class="phase-num">Phase 03 — Post-vol</div>
+      <div class="phase-title">Améliorer</div>
+      <p class="phase-body">Boîte noire, RETEX, amélioration continue. Chaque exécution est tracée. Chaque décision est auditable. Le système apprend.</p>
+    </div>
+  </div>
+</section>
+
+<!-- INSTRUMENTS -->
+<section id="instruments">
+  <div class="instruments-intro">
+    <div>
+      <div class="section-label">Instruments de bord</div>
+      <h2 class="section-title">Six systèmes.<br>Un cockpit.</h2>
+    </div>
+    <p class="section-body">Pas d'intuition. Des instruments. Chaque fonctionnalité est conçue pour donner une vision précise et fiable de l'exécution en cours.</p>
+  </div>
+  <div class="instruments-grid">
+
+    <div class="instr-card">
+      <div class="instr-border"></div>
+      <div class="instr-id">FD-01 / AUTOPILOT</div>
+      <div class="instr-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="12" stroke="#00cfef" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="4" fill="#00cfef" opacity="0.3"/>
+          <circle cx="16" cy="16" r="2" fill="#00cfef"/>
+          <line x1="16" y1="4" x2="16" y2="8" stroke="#00cfef" stroke-width="1.5"/>
+          <line x1="16" y1="24" x2="16" y2="28" stroke="#00cfef" stroke-width="1.5" opacity="0.3"/>
+          <line x1="4" y1="16" x2="8" y2="16" stroke="#00cfef" stroke-width="1.5" opacity="0.3"/>
+          <line x1="24" y1="16" x2="28" y2="16" stroke="#00cfef" stroke-width="1.5" opacity="0.3"/>
+        </svg>
+      </div>
+      <div class="instr-title">Autonomie supervisée</div>
+      <p class="instr-body">Les agents opèrent dans une enveloppe d'autorisation définie. Chaque action est bornée, chaque dépassement est bloqué.</p>
+      <div class="instr-status">Opérationnel</div>
+    </div>
+
+    <div class="instr-card">
+      <div class="instr-border"></div>
+      <div class="instr-id">FD-02 / PFD</div>
+      <div class="instr-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect x="2" y="8" width="28" height="16" rx="1" stroke="#f5a623" stroke-width="1.5"/>
+          <line x1="2" y1="16" x2="30" y2="16" stroke="#f5a623" stroke-width="1" opacity="0.4"/>
+          <line x1="10" y1="8" x2="10" y2="24" stroke="#f5a623" stroke-width="1" opacity="0.3"/>
+          <line x1="22" y1="8" x2="22" y2="24" stroke="#f5a623" stroke-width="1" opacity="0.3"/>
+          <circle cx="16" cy="16" r="3" stroke="#f5a623" stroke-width="1.5"/>
+          <line x1="16" y1="8" x2="16" y2="13" stroke="#f5a623" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="instr-title">Vol aux instruments</div>
+      <p class="instr-body">Des indicateurs fiables, pas d'intuition. Chaque métrique est sourcée, vérifiée, affichée en temps réel. Décisions basées sur des faits.</p>
+      <div class="instr-status">Opérationnel</div>
+    </div>
+
+    <div class="instr-card">
+      <div class="instr-border"></div>
+      <div class="instr-id">FD-03 / CVR</div>
+      <div class="instr-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect x="4" y="4" width="24" height="24" rx="2" stroke="#00d68f" stroke-width="1.5"/>
+          <line x1="8" y1="10" x2="24" y2="10" stroke="#00d68f" stroke-width="1" opacity="0.6"/>
+          <line x1="8" y1="14" x2="20" y2="14" stroke="#00d68f" stroke-width="1" opacity="0.6"/>
+          <line x1="8" y1="18" x2="22" y2="18" stroke="#00d68f" stroke-width="1" opacity="0.6"/>
+          <line x1="8" y1="22" x2="16" y2="22" stroke="#00d68f" stroke-width="1" opacity="0.6"/>
+          <circle cx="24" cy="22" r="4" fill="#00d68f" opacity="0.15" stroke="#00d68f" stroke-width="1.5"/>
+          <circle cx="24" cy="22" r="1.5" fill="#00d68f"/>
+        </svg>
+      </div>
+      <div class="instr-title">Boîte noire</div>
+      <p class="instr-body">Journalisation complète de chaque décision, chaque action, chaque résultat. Audit trail complet. Conformité native, rien à paramétrer.</p>
+      <div class="instr-status">Opérationnel</div>
+    </div>
+
+    <div class="instr-card">
+      <div class="instr-border"></div>
+      <div class="instr-id">FD-04 / CHICA</div>
+      <div class="instr-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <path d="M16 4L28 26H4L16 4Z" stroke="#ff3b50" stroke-width="1.5" fill="none"/>
+          <line x1="16" y1="12" x2="16" y2="18" stroke="#ff3b50" stroke-width="2"/>
+          <circle cx="16" cy="22" r="1.5" fill="#ff3b50"/>
+        </svg>
+      </div>
+      <div class="instr-title">CHICA automatique</div>
+      <p class="instr-body">Détection d'anomalie en temps réel. Dès qu'une déviation est identifiée, le système corrige, alerte ou stoppe — avant que le problème ne se propage.</p>
+      <div class="instr-status">Opérationnel</div>
+    </div>
+
+    <div class="instr-card">
+      <div class="instr-border"></div>
+      <div class="instr-id">FD-05 / TCAS</div>
+      <div class="instr-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="12" stroke="#00cfef" stroke-width="1.5" opacity="0.3"/>
+          <circle cx="16" cy="16" r="8" stroke="#00cfef" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="16" cy="16" r="4" stroke="#00cfef" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="1.5" fill="#00cfef"/>
+          <line x1="16" y1="4" x2="16" y2="10" stroke="#00cfef" stroke-width="1.5" stroke-dasharray="2 2"/>
+        </svg>
+      </div>
+      <div class="instr-title">Anticipation</div>
+      <p class="instr-body">Alertes proactives avant les problèmes. Le système modélise les risques en amont et notifie les équipes avec suffisamment d'avance pour agir.</p>
+      <div class="instr-status">Opérationnel</div>
+    </div>
+
+    <div class="instr-card">
+      <div class="instr-border"></div>
+      <div class="instr-id">FD-06 / RGPD</div>
+      <div class="instr-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect x="6" y="14" width="20" height="14" rx="1" stroke="#00d68f" stroke-width="1.5"/>
+          <path d="M10 14V10a6 6 0 0 1 12 0v4" stroke="#00d68f" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="21" r="2.5" stroke="#00d68f" stroke-width="1.5"/>
+          <line x1="16" y1="23.5" x2="16" y2="26" stroke="#00d68f" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="instr-title">Conformité native</div>
+      <p class="instr-body">RGPD intégré dès l'architecture, pas en option. Souveraineté des données, isolation des traitements, droit à l'oubli — par design.</p>
+      <div class="instr-status">Opérationnel</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ÉQUIPAGE -->
+<section id="equipage">
+  <div class="section-label">Équipage</div>
+  <h2 class="section-title">Aux commandes</h2>
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="team-role">Pilote — Architecture & Engineering</div>
+      <div class="team-name">Paul Laisne</div>
+      <p class="team-desc">Architecte des systèmes d'exécution IA. En charge de la rigueur technique qui fait tenir l'enveloppe de vol.</p>
+      <a href="https://www.linkedin.com/in/paul-laisné/" target="_blank" class="team-linkedin">
+        LinkedIn →
+      </a>
+    </div>
+    <div class="team-card">
+      <div class="team-role">Copilote — Go-to-Market & Produit</div>
+      <div class="team-name">Yannick Bardie</div>
+      <p class="team-desc">Stratégie produit et mise sur le marché. En charge des opérations commerciales et du cap à tenir.</p>
+      <a href="https://www.linkedin.com/in/yannickbardie/" target="_blank" class="team-linkedin">
+        LinkedIn →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section id="cta-final">
+  <div class="cta-content">
+    <div class="cta-tag">Accès beta — Places limitées</div>
+    <h2 class="section-title">Prêt à embarquer ?</h2>
+    <p class="section-body">Beta ouverte aux entreprises sélectionnées. Accès direct à l'équipe fondatrice.</p>
+    <div class="cta-final-row">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSeAzRhdghZqplhfhZcYypTNL2aP4pqBozRb-XDa2KSsq0PeKA/viewform" target="_blank" class="btn-primary" style="font-size:15px; padding:20px 40px;">
+        Prendre son siège <span class="arrow">→</span>
+      </a>
+      <div class="limited-seats">Accès sur candidature</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">FlightDesk</span>
+  <span class="footer-copy">© 2026 — Cockpit numérique pour agents IA</span>
+</footer>
+
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CINEMATIC ANIMATION — Dusk Exterior → Glass Cockpit
+   10s loop: atmosphere / zoom / G3000 instruments / fade
+═══════════════════════════════════════════════════════════ */
+(function () {
+  const canvas = document.getElementById('horizon-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, t = 0;
+
+  // ─ Timeline (seconds) ─
+  const T = { ext: 2.5, zoom: 2.5, cockpit: 3.2, fade: 1.8 };
+  const TOTAL = T.ext + T.zoom + T.cockpit + T.fade; // 10s
+
+  function resize() {
+    W = canvas.offsetWidth || 900; H = canvas.offsetHeight || 700;
+    canvas.width = W; canvas.height = H;
+  }
+  resize(); window.addEventListener('resize', resize);
+
+  // ─ Utilities ─
+  const ease  = x => x < .5 ? 2*x*x : 1 - Math.pow(-2*x+2,2)/2;
+  const easeIn = x => x*x*x;
+  const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+  const lerp  = (a,b,t) => a+(b-a)*t;
+
+  // ─ Seeded noise particles ─
+  const stars = Array.from({length:260}, (_,i) => ({
+    x: (Math.sin(i*127.1)*0.5+0.5),
+    y: (Math.sin(i*311.7)*0.5+0.5)*0.70,
+    r: 0.3+Math.abs(Math.sin(i*99.3))*1.4,
+    ph: Math.sin(i*57.2)*Math.PI*2
+  }));
+
+  const cloudSeeds = Array.from({length:12}, (_,i) => ({
+    x: (Math.sin(i*173.1)*0.5+0.5),
+    y: 0.55 + (Math.sin(i*211.3)*0.5+0.5)*0.25,
+    w: 0.10 + Math.abs(Math.sin(i*99.1))*0.20,
+    h: 0.025 + Math.abs(Math.sin(i*137.3))*0.04,
+    spd: 0.00008 + Math.abs(Math.sin(i*83.7))*0.00008,
+    bright: 0.3 + Math.abs(Math.sin(i*61.1))*0.4
+  }));
+
+  const cityDots = Array.from({length:80}, (_,i) => ({
+    x: (Math.sin(i*191.7)*0.5+0.5),
+    y: 0.78 + (Math.sin(i*233.1)*0.5+0.5)*0.19,
+    r: 0.3 + Math.abs(Math.sin(i*77.3))*1.6,
+    ph: Math.sin(i*43.1)*Math.PI*2,
+    hue: [0,120,200,340][i%4]
+  }));
+
+  // ─── EXTERIOR SCENE ───────────────────────────────────────
+  function drawAtmosphere(progress) {
+    // Sky: deep twilight — violet top → indigo → amber/teal horizon
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,    '#03020a');
+    g.addColorStop(0.18, '#080618');
+    g.addColorStop(0.42, '#0d0e28');
+    g.addColorStop(0.62, '#0a1535');
+    g.addColorStop(0.74, '#0c2240');
+    g.addColorStop(0.83, '#102a1a');
+    g.addColorStop(0.90, '#1a3a10');
+    g.addColorStop(1,    '#04080f');
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+
+    // Horizon atmospheric band — warm amber glow at horizon
+    const hY = H * 0.80;
+    const hg = ctx.createLinearGradient(0, hY-H*0.18, 0, hY+H*0.10);
+    hg.addColorStop(0,   'rgba(0,0,0,0)');
+    hg.addColorStop(0.3, 'rgba(180,100,20,0.06)');
+    hg.addColorStop(0.6, 'rgba(245,140,30,0.10)');
+    hg.addColorStop(0.8, 'rgba(200,110,20,0.06)');
+    hg.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = hg; ctx.fillRect(0, hY-H*0.18, W, H*0.28);
+
+    // Stars (fade based on twilight)
+    stars.forEach(s => {
+      const tw = 0.6 + 0.4*Math.sin(t*1.1+s.ph);
+      ctx.fillStyle = `rgba(220,230,255,${tw*0.80})`;
+      ctx.beginPath(); ctx.arc(s.x*W, s.y*H, s.r, 0, Math.PI*2); ctx.fill();
+    });
+
+    // Milky Way band (subtle diagonal smear)
+    for(let i=0;i<6;i++){
+      const mg = ctx.createLinearGradient(W*(0.1+i*0.13),0,W*(0.18+i*0.13),H*0.55);
+      mg.addColorStop(0,'rgba(100,110,180,0)');
+      mg.addColorStop(0.5,`rgba(80,90,160,${0.015+i*0.004})`);
+      mg.addColorStop(1,'rgba(60,70,140,0)');
+      ctx.fillStyle=mg; ctx.fillRect(W*(0.08+i*0.13),0,W*0.12,H*0.55);
+    }
+  }
+
+  function drawClouds(alpha) {
+    cloudSeeds.forEach(c => {
+      c.x -= c.spd; if(c.x + c.w < 0) c.x = 1 + c.w;
+      const cx2 = c.x*W, cy2 = c.y*H;
+      // Multi-pass cloud with internal glow
+      for(let pass=0; pass<3; pass++){
+        const r  = c.w*W*(0.5+pass*0.2);
+        const a  = alpha * c.bright * [0.55, 0.30, 0.12][pass];
+        const cg = ctx.createRadialGradient(cx2,cy2,0,cx2,cy2,r);
+        // Lit from below by city glow
+        cg.addColorStop(0, `rgba(20,38,60,${a})`);
+        cg.addColorStop(0.5, `rgba(12,24,42,${a*0.6})`);
+        cg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle=cg;
+        ctx.beginPath();
+        ctx.ellipse(cx2,cy2,r,c.h*H*(1+pass*0.5),0,0,Math.PI*2);
+        ctx.fill();
+      }
+      // Cloud top highlight (moonlight)
+      const topg = ctx.createLinearGradient(cx2-c.w*W*0.3,cy2-c.h*H,cx2,cy2);
+      topg.addColorStop(0,`rgba(140,160,200,${alpha*c.bright*0.18})`);
+      topg.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=topg;
+      ctx.beginPath();
+      ctx.ellipse(cx2,cy2-c.h*H*0.2,c.w*W*0.4,c.h*H*0.5,0,0,Math.PI*2);
+      ctx.fill();
+    });
+  }
+
+  function drawCityGlow(alpha) {
+    // City lights ground glow
+    const gg = ctx.createLinearGradient(0, H*0.76, 0, H);
+    gg.addColorStop(0, 'rgba(0,0,0,0)');
+    gg.addColorStop(0.3, `rgba(40,60,20,${alpha*0.25})`);
+    gg.addColorStop(1, `rgba(20,35,10,${alpha*0.15})`);
+    ctx.fillStyle=gg; ctx.fillRect(0,H*0.76,W,H*0.24);
+
+    cityDots.forEach(d => {
+      const tw = 0.5+0.5*Math.sin(t*0.7+d.ph);
+      const cols = [[245,166,35],[0,207,239],[238,242,247],[0,214,143]];
+      const c = cols[d.hue===0?0:d.hue===120?3:d.hue===200?1:2];
+      ctx.fillStyle=`rgba(${c[0]},${c[1]},${c[2]},${alpha*tw*0.55})`;
+      ctx.beginPath(); ctx.arc(d.x*W, d.y*H, d.r*0.7, 0, Math.PI*2); ctx.fill();
+    });
+  }
+
+  // Aircraft silhouette — seen from 3/4 front-low angle, flying away/toward
+  // TBM940 style: low-wing, T-tail, prop, streamlined fuselage
+  function drawAircraftSilhouette(cx, cy, sc, bank, fogA) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(bank);
+    ctx.scale(sc, sc);
+
+    // Atmospheric haze around aircraft (depth cue)
+    const haze = ctx.createRadialGradient(0,0,60,0,0,300);
+    haze.addColorStop(0,'rgba(10,20,40,0)');
+    haze.addColorStop(1,`rgba(8,16,32,${fogA*0.4})`);
+    ctx.fillStyle=haze;
+    ctx.beginPath(); ctx.arc(0,0,300,0,Math.PI*2); ctx.fill();
+
+    // Engine exhaust trail — hot amber
+    const ex=ctx.createRadialGradient(170,8,0,220,8,70);
+    ex.addColorStop(0,'rgba(255,200,80,0.65)');
+    ex.addColorStop(0.2,'rgba(255,140,30,0.35)');
+    ex.addColorStop(0.5,'rgba(255,100,10,0.12)');
+    ex.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=ex;
+    ctx.beginPath(); ctx.ellipse(230,8,80,28,0.05,0,Math.PI*2); ctx.fill();
+
+    // Condensation trail (faint, white-ish)
+    for(let i=0; i<5; i++){
+      const tg=ctx.createLinearGradient(180+i*30,0,180+i*30+30,0);
+      tg.addColorStop(0,`rgba(200,210,230,${0.08-i*0.015})`);
+      tg.addColorStop(1,'rgba(200,210,230,0)');
+      ctx.fillStyle=tg;
+      ctx.beginPath();
+      ctx.ellipse(200+i*32, 8+i*1.5, 34, 5+i*1.5, 0.05, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    // ── Main fuselage — dark metallic silhouette
+    // Use a very dark gradient with subtle metallic sheen
+    const fgMain = ctx.createLinearGradient(-190,-10,-190,30);
+    fgMain.addColorStop(0, '#1a2838');
+    fgMain.addColorStop(0.25, '#0f1c2e');
+    fgMain.addColorStop(0.7, '#0a1420');
+    fgMain.addColorStop(1, '#060e18');
+    ctx.fillStyle = fgMain;
+    ctx.shadowColor = 'rgba(0,100,180,0.08)'; ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.moveTo(-185, 12);
+    ctx.bezierCurveTo(-170,-28,-118,-42,-68,-40);
+    ctx.bezierCurveTo(-22,-38,26,-32,78,-26);
+    ctx.bezierCurveTo(120,-22,158,-18,180,-14);
+    ctx.lineTo(183,-5); ctx.lineTo(183,10);
+    ctx.bezierCurveTo(152,20,85,24,0,24);
+    ctx.bezierCurveTo(-65,24,-125,20,-162,12);
+    ctx.closePath(); ctx.fill();
+    ctx.shadowBlur=0;
+
+    // Fuselage top specular (moonlight reflection)
+    const fSpec=ctx.createLinearGradient(-180,-40,180,-10);
+    fSpec.addColorStop(0,'rgba(100,140,200,0)');
+    fSpec.addColorStop(0.3,'rgba(120,160,220,0.12)');
+    fSpec.addColorStop(0.6,'rgba(100,140,200,0.08)');
+    fSpec.addColorStop(1,'rgba(80,120,180,0)');
+    ctx.strokeStyle=fSpec; ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.moveTo(-168,-14); ctx.bezierCurveTo(-80,-40,60,-28,180,-12);
+    ctx.stroke();
+
+    // ── Cockpit windows — large panoramic, lit from inside
+    const wg=ctx.createLinearGradient(-172,-4,-68,-2);
+    wg.addColorStop(0,'rgba(0,180,240,0.5)');
+    wg.addColorStop(0.35,'rgba(60,160,230,0.38)');
+    wg.addColorStop(0.7,'rgba(20,120,200,0.25)');
+    wg.addColorStop(1,'rgba(0,80,140,0.12)');
+    ctx.fillStyle=wg; ctx.strokeStyle='rgba(0,207,239,0.55)'; ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.moveTo(-172,4);
+    ctx.bezierCurveTo(-164,-22,-148,-37,-126,-38);
+    ctx.bezierCurveTo(-102,-38,-80,-30,-68,-20);
+    ctx.lineTo(-68,-5);
+    ctx.bezierCurveTo(-92,-10,-138,-10,-172,4);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+
+    // Window reflection
+    ctx.fillStyle='rgba(200,230,255,0.07)';
+    ctx.beginPath();
+    ctx.moveTo(-168,0); ctx.bezierCurveTo(-160,-16,-145,-28,-126,-29);
+    ctx.lineTo(-132,-20); ctx.bezierCurveTo(-148,-20,-160,-10,-166,0); ctx.closePath(); ctx.fill();
+
+    // ── T-tail (TBM style)
+    const vtg=ctx.createLinearGradient(145,-92,175,-22);
+    vtg.addColorStop(0,'#1a2c44'); vtg.addColorStop(1,'#0c1828');
+    ctx.fillStyle=vtg; ctx.strokeStyle='rgba(100,140,200,0.12)'; ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(145,-26); ctx.lineTo(150,-90);
+    ctx.bezierCurveTo(158,-95,170,-92,173,-85);
+    ctx.lineTo(176,-24); ctx.closePath(); ctx.fill(); ctx.stroke();
+
+    // Horiz stabilizer
+    ctx.fillStyle='#111e30'; ctx.strokeStyle='rgba(100,140,200,0.1)'; ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(118,-84); ctx.bezierCurveTo(132,-94,162,-96,206,-87);
+    ctx.bezierCurveTo(208,-82,192,-76,162,-77);
+    ctx.lineTo(125,-79); ctx.closePath(); ctx.fill(); ctx.stroke();
+
+    // ── Wing
+    const wWing=ctx.createLinearGradient(-30,-36,50,50);
+    wWing.addColorStop(0,'#16273c'); wWing.addColorStop(0.6,'#0e1e30'); wWing.addColorStop(1,'#091522');
+    ctx.fillStyle=wWing; ctx.strokeStyle='rgba(100,140,200,0.15)'; ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(-28,-36); ctx.bezierCurveTo(5,-34,60,-24,128,-18);
+    ctx.bezierCurveTo(158,-15,175,-13,178,-11);
+    ctx.lineTo(174,-8); ctx.bezierCurveTo(115,-12,44,-16,-16,10);
+    ctx.bezierCurveTo(-46,22,-58,34,-62,42); ctx.lineTo(-80,42);
+    ctx.bezierCurveTo(-75,28,-64,10,-46,-8);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+
+    // Wing specular
+    ctx.strokeStyle='rgba(140,180,240,0.1)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(-28,-36); ctx.bezierCurveTo(55,-26,130,-18,178,-11); ctx.stroke();
+
+    // ── Propeller disc (TBM940 turboprop)
+    const propA = 0.06;
+    ctx.fillStyle=`rgba(100,120,160,${propA})`;
+    ctx.beginPath(); ctx.ellipse(-186,5,5,22,0.05,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=`rgba(140,160,200,${propA*1.5})`;
+    ctx.lineWidth=1; ctx.setLineDash([2,4]);
+    ctx.beginPath(); ctx.ellipse(-186,5,4,20,0.05,0,Math.PI*2); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Nose spinner
+    const spinG=ctx.createRadialGradient(-188,5,0,-185,5,10);
+    spinG.addColorStop(0,'rgba(40,60,90,0.9)');
+    spinG.addColorStop(1,'rgba(20,35,55,0)');
+    ctx.fillStyle=spinG; ctx.beginPath(); ctx.ellipse(-188,5,8,10,0.1,0,Math.PI*2); ctx.fill();
+
+    // ── Navigation lights
+    const bcnA = 0.4+0.6*Math.abs(Math.sin(t*2.8));
+    ctx.shadowColor='#ff4060'; ctx.shadowBlur=bcnA*18;
+    ctx.fillStyle=`rgba(255,60,80,${0.6+bcnA*0.4})`;
+    ctx.beginPath(); ctx.arc(-70,40,3.5,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+
+    ctx.shadowColor='#40ff80'; ctx.shadowBlur=8;
+    ctx.fillStyle='rgba(80,255,120,0.7)';
+    ctx.beginPath(); ctx.arc(178,-12,2.5,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+
+    // Landing light beam
+    const llg=ctx.createRadialGradient(-192,6,0,-192,6,55);
+    llg.addColorStop(0,'rgba(245,240,220,0.75)');
+    llg.addColorStop(0.3,'rgba(200,210,220,0.25)');
+    llg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=llg;
+    ctx.beginPath(); ctx.ellipse(-205,6,55,20,-0.1,0,Math.PI*2); ctx.fill();
+
+    ctx.restore();
+  }
+
+  // ─── ZOOM TRANSITION — Windshield vignette approaching ─────
+  function drawZoomTransition(prog) {
+    const ep = ease(prog);
+
+    // Darkening corners (windshield frame appearing)
+    const vig=ctx.createRadialGradient(W/2,H/2,H*(0.6-ep*0.4),W/2,H/2,H*1.1);
+    vig.addColorStop(0,'rgba(0,0,0,0)');
+    vig.addColorStop(0.7,`rgba(4,8,15,${ep*0.5})`);
+    vig.addColorStop(1,`rgba(4,8,15,${ep*0.95})`);
+    ctx.fillStyle=vig; ctx.fillRect(0,0,W,H);
+
+    // Windshield reflections appearing (subtle cyan tint)
+    if(ep>0.4){
+      const rA=(ep-0.4)/0.6;
+      ctx.fillStyle=`rgba(0,60,100,${rA*0.06})`;
+      ctx.fillRect(0,0,W,H);
+      // Glass scratch highlights
+      for(let i=0;i<4;i++){
+        const sx=W*(0.2+i*0.22), sw=W*0.015;
+        const sg=ctx.createLinearGradient(sx,0,sx+sw,H*0.7);
+        sg.addColorStop(0,'rgba(0,207,239,0)');
+        sg.addColorStop(0.3,`rgba(0,207,239,${rA*0.04})`);
+        sg.addColorStop(0.7,`rgba(0,207,239,${rA*0.02})`);
+        sg.addColorStop(1,'rgba(0,207,239,0)');
+        ctx.fillStyle=sg; ctx.fillRect(sx,0,sw,H*0.7);
+      }
+    }
+  }
+
+  // ─── COCKPIT INTERIOR ─────────────────────────────────────
+  let ck_t = 0; // cockpit time accumulator
+  const agentFeed = [
+    {label:'EXEC',  text:'workflow-001 running',  col:'0,207,239'},
+    {label:'TASK',  text:'doc-analysis · done ✓', col:'0,214,143'},
+    {label:'AGENT', text:'data-pipeline active',  col:'0,207,239'},
+    {label:'ALERT', text:'anomaly → corrected ✓', col:'0,214,143'},
+    {label:'EXEC',  text:'report-gen · step 3/5', col:'0,207,239'},
+    {label:'COMP',  text:'RGPD check · pass ✓',   col:'0,214,143'},
+  ];
+
+  function drawCockpit(alpha) {
+    const a = clamp(alpha,0,1);
+    const cw=W, ch=H;
+
+    // ── Window view (behind instruments) ──
+    // Sky through windshield — dramatic night horizon
+    const skyg=ctx.createLinearGradient(0,0,0,ch*0.70);
+    skyg.addColorStop(0,`rgba(2,3,10,${a})`);
+    skyg.addColorStop(0.35,`rgba(5,8,22,${a})`);
+    skyg.addColorStop(0.6,`rgba(8,12,32,${a})`);
+    skyg.addColorStop(0.75,`rgba(10,20,12,${a})`);
+    skyg.addColorStop(1,`rgba(4,8,15,${a})`);
+    ctx.fillStyle=skyg; ctx.fillRect(0,0,cw,ch*0.70);
+
+    // Stars in window
+    stars.slice(0,140).forEach(s=>{
+      const tw=0.5+0.5*Math.sin(ck_t*1.1+s.ph);
+      ctx.fillStyle=`rgba(220,228,255,${a*tw*0.75})`;
+      ctx.beginPath(); ctx.arc(s.x*cw, s.y*ch*0.65, s.r*0.85,0,Math.PI*2); ctx.fill();
+    });
+
+    // Moon glow
+    const moon=ctx.createRadialGradient(cw*0.72,ch*0.08,0,cw*0.72,ch*0.08,ch*0.18);
+    moon.addColorStop(0,`rgba(220,230,255,${a*0.55})`);
+    moon.addColorStop(0.15,`rgba(180,200,240,${a*0.2})`);
+    moon.addColorStop(0.4,`rgba(100,140,200,${a*0.06})`);
+    moon.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=moon; ctx.beginPath(); ctx.arc(cw*0.72,ch*0.08,ch*0.18,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=`rgba(240,245,255,${a*0.9})`;
+    ctx.beginPath(); ctx.arc(cw*0.72,ch*0.08,10,0,Math.PI*2); ctx.fill();
+
+    // Horizon glow (destination ahead)
+    const hzY=ch*0.62;
+    const hg=ctx.createLinearGradient(0,hzY-ch*0.1,0,hzY+ch*0.08);
+    hg.addColorStop(0,'rgba(0,0,0,0)');
+    hg.addColorStop(0.4,`rgba(20,80,40,${a*0.18})`);
+    hg.addColorStop(0.65,`rgba(40,120,30,${a*0.12})`);
+    hg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=hg; ctx.fillRect(0,hzY-ch*0.1,cw,ch*0.18);
+
+    // Distant city glow on horizon
+    const cg2=ctx.createRadialGradient(cw*0.45,hzY+ch*0.05,0,cw*0.45,hzY+ch*0.05,cw*0.45);
+    cg2.addColorStop(0,`rgba(245,166,35,${a*0.14})`);
+    cg2.addColorStop(0.4,`rgba(200,100,20,${a*0.06})`);
+    cg2.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=cg2; ctx.fillRect(0,hzY-ch*0.05,cw,ch*0.15);
+
+    // City lights below (through windshield bottom)
+    cityDots.forEach(d=>{
+      const tw=0.4+0.6*Math.abs(Math.sin(ck_t*0.8+d.ph));
+      const cols=[[245,166,35],[0,207,239],[238,242,247],[0,214,143]];
+      const c=cols[d.hue===0?0:d.hue===120?3:d.hue===200?1:2];
+      ctx.fillStyle=`rgba(${c[0]},${c[1]},${c[2]},${a*tw*0.45})`;
+      ctx.beginPath(); ctx.arc(d.x*cw, d.y*ch*0.68+hzY*0.06, d.r*0.65,0,Math.PI*2); ctx.fill();
+    });
+
+    // ── Instrument panel body ──
+    const panelY = ch*0.685;
+    const panG=ctx.createLinearGradient(0,panelY,0,ch);
+    panG.addColorStop(0,`rgba(6,12,22,${a})`);
+    panG.addColorStop(0.12,`rgba(8,16,28,${a})`);
+    panG.addColorStop(1,`rgba(3,6,12,${a})`);
+    ctx.fillStyle=panG;
+    ctx.beginPath();
+    ctx.moveTo(0,ch); ctx.lineTo(0,panelY+ch*0.06);
+    ctx.bezierCurveTo(cw*0.08,panelY-ch*0.02, cw*0.38,panelY-ch*0.05, cw/2,panelY-ch*0.05);
+    ctx.bezierCurveTo(cw*0.62,panelY-ch*0.05, cw*0.92,panelY-ch*0.02, cw,panelY+ch*0.06);
+    ctx.lineTo(cw,ch); ctx.closePath(); ctx.fill();
+
+    // Panel edge glow
+    ctx.strokeStyle=`rgba(0,207,239,${a*0.12})`; ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(0,panelY+ch*0.06);
+    ctx.bezierCurveTo(cw*0.08,panelY-ch*0.02,cw*0.38,panelY-ch*0.05,cw/2,panelY-ch*0.05);
+    ctx.bezierCurveTo(cw*0.62,panelY-ch*0.05,cw*0.92,panelY-ch*0.02,cw,panelY+ch*0.06);
+    ctx.stroke();
+
+    // ── Screen definitions (Garmin G3000 style layout) ──
+    const scrH = ch*0.24;
+    const scrY = panelY - ch*0.02;
+    const gap  = cw*0.012;
+    const scrW = (cw - gap*4) / 3;
+    const screens2 = [
+      { x: gap,            w: scrW, label:'PFD', acol:'0,207,239',  type:'pfd' },
+      { x: gap*2+scrW,     w: scrW, label:'MFD — FlightDesk AI', acol:'0,214,143', type:'mfd' },
+      { x: gap*3+scrW*2,   w: scrW, label:'EIS', acol:'245,166,35', type:'eis' },
+    ];
+
+    screens2.forEach(sc=>{
+      const rgb=sc.acol;
+      // Screen glow halo
+      const sg=ctx.createRadialGradient(sc.x+sc.w/2,scrY+scrH/2,0,sc.x+sc.w/2,scrY+scrH/2,sc.w*0.7);
+      sg.addColorStop(0,`rgba(${rgb},${a*0.10})`);
+      sg.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=sg; ctx.fillRect(sc.x-8,scrY-8,sc.w+16,scrH+16);
+
+      // Screen body
+      ctx.fillStyle=`rgba(3,8,18,${a*0.96})`;
+      ctx.fillRect(sc.x,scrY,sc.w,scrH);
+
+      // Screen border
+      ctx.strokeStyle=`rgba(${rgb},${a*0.55})`; ctx.lineWidth=1.2;
+      ctx.strokeRect(sc.x,scrY,sc.w,scrH);
+
+      // Screen header bar
+      ctx.fillStyle=`rgba(${rgb},${a*0.08})`;
+      ctx.fillRect(sc.x,scrY,sc.w,scrH*0.11);
+      ctx.fillStyle=`rgba(${rgb},${a*0.75})`;
+      ctx.font=`500 ${Math.round(scrH*0.085)}px IBM Plex Mono,monospace`;
+      ctx.textAlign='left';
+      ctx.fillText(sc.label, sc.x+8, scrY+scrH*0.087);
+
+      // ── PFD ──
+      if(sc.type==='pfd'){
+        const pX=sc.x, pY=scrY, pW=sc.w, pH=scrH;
+        const iY=pY+pH*0.12, iH=pH*0.68;
+        const iX=pX+pW*0.14, iW=pW*0.72;
+
+        // Clip to inner PFD area
+        ctx.save();
+        ctx.beginPath(); ctx.rect(iX,iY,iW,iH); ctx.clip();
+
+        const pitch=Math.sin(ck_t*0.28)*3.5;
+        const roll2=Math.sin(ck_t*0.19)*5;
+        const ppx=pitch*(iH/55);
+
+        ctx.save();
+        ctx.translate(iX+iW/2,iY+iH/2);
+        ctx.rotate(roll2*Math.PI/180);
+
+        // Sky
+        const sg2=ctx.createLinearGradient(0,-iH,0,ppx);
+        sg2.addColorStop(0,`rgba(4,20,55,${a})`);
+        sg2.addColorStop(1,`rgba(8,35,90,${a})`);
+        ctx.fillStyle=sg2; ctx.fillRect(-iW,-iH*2,iW*2,iH*2+ppx);
+
+        // Ground
+        const gg2=ctx.createLinearGradient(0,ppx,0,iH);
+        gg2.addColorStop(0,`rgba(42,20,5,${a})`);
+        gg2.addColorStop(1,`rgba(18,8,2,${a})`);
+        ctx.fillStyle=gg2; ctx.fillRect(-iW,ppx,iW*2,iH*2);
+
+        // Horizon
+        ctx.strokeStyle=`rgba(238,242,247,${a})`; ctx.lineWidth=1.8;
+        ctx.beginPath(); ctx.moveTo(-iW,ppx); ctx.lineTo(iW,ppx); ctx.stroke();
+
+        // Pitch ladder
+        for(let d=-25;d<=25;d+=5){
+          if(d===0) continue;
+          const ly=ppx-d*(iH/55);
+          const ll=(d%10===0)?iW*0.24:iW*0.14;
+          ctx.strokeStyle=`rgba(238,242,247,${a*(d%10===0?0.55:0.3)})`;
+          ctx.lineWidth=(d%10===0)?1.5:1;
+          ctx.beginPath(); ctx.moveTo(-ll/2,ly); ctx.lineTo(ll/2,ly); ctx.stroke();
+          if(d%10===0){
+            ctx.font=`400 ${Math.round(iH*0.08)}px IBM Plex Mono,monospace`;
+            ctx.fillStyle=`rgba(238,242,247,${a*0.6})`;
+            ctx.textAlign='left'; ctx.fillText(Math.abs(d),ll/2+4,ly+3);
+            ctx.textAlign='right'; ctx.fillText(Math.abs(d),-ll/2-4,ly+3);
+          }
+        }
+        ctx.restore(); // un-rotate
+        ctx.restore(); // un-clip
+
+        // Aircraft reference symbol (amber)
+        const ax=iX+iW/2, ay=iY+iH/2;
+        ctx.strokeStyle=`rgba(245,166,35,${a})`; ctx.lineWidth=2.2;
+        ctx.beginPath();
+        ctx.moveTo(ax-iW*0.22,ay); ctx.lineTo(ax-iW*0.07,ay);
+        ctx.moveTo(ax+iW*0.07,ay); ctx.lineTo(ax+iW*0.22,ay);
+        ctx.stroke();
+        ctx.fillStyle=`rgba(245,166,35,${a})`;
+        ctx.beginPath(); ctx.arc(ax,ay,4,0,Math.PI*2); ctx.fill();
+
+        // Roll indicator arc
+        ctx.strokeStyle=`rgba(238,242,247,${a*0.25})`; ctx.lineWidth=1;
+        ctx.beginPath(); ctx.arc(ax,ay+1,iH*0.42,Math.PI*1.08,Math.PI*1.92); ctx.stroke();
+
+        // Roll pointer
+        const rollRad=(Math.sin(ck_t*0.19)*5)*Math.PI/180;
+        const rr=iH*0.42;
+        ctx.save(); ctx.translate(ax,ay+1); ctx.rotate(rollRad);
+        ctx.fillStyle=`rgba(238,242,247,${a})`;
+        ctx.beginPath();
+        ctx.moveTo(0,-(rr-2)); ctx.lineTo(5,-(rr-14)); ctx.lineTo(-5,-(rr-14)); ctx.closePath(); ctx.fill();
+        ctx.restore();
+
+        // Speed tape (left)
+        const tpW=pW*0.12, tpH=pH*0.6, tpX=pX+4, tpY=scrY+pH*0.17;
+        ctx.fillStyle=`rgba(4,10,20,${a*0.88})`;
+        ctx.fillRect(tpX,tpY,tpW,tpH);
+        ctx.strokeStyle=`rgba(0,207,239,${a*0.4})`; ctx.lineWidth=1;
+        ctx.strokeRect(tpX,tpY,tpW,tpH);
+        const spd2=284+Math.round(Math.sin(ck_t*0.3)*2);
+        for(let i=-3;i<=3;i++){
+          const v=spd2+i*10;
+          const ty=tpY+tpH/2+i*(tpH/8);
+          ctx.fillStyle=i===0?`rgba(238,242,247,${a})`:`rgba(238,242,247,${a*0.3})`;
+          ctx.font=i===0?`600 ${Math.round(pH*0.07)}px IBM Plex Mono,monospace`:`400 ${Math.round(pH*0.045)}px IBM Plex Mono,monospace`;
+          ctx.textAlign='center'; ctx.fillText(v,tpX+tpW/2,ty+4);
+        }
+        ctx.fillStyle=`rgba(0,207,239,${a*0.7})`;
+        ctx.font=`400 ${Math.round(pH*0.05)}px IBM Plex Mono,monospace`;
+        ctx.textAlign='center'; ctx.fillText('KTS',tpX+tpW/2,tpY+pH*0.04);
+
+        // Alt tape (right)
+        const atX=pX+pW-tpW-4;
+        ctx.fillStyle=`rgba(4,10,20,${a*0.88})`;
+        ctx.fillRect(atX,tpY,tpW,tpH);
+        ctx.strokeStyle=`rgba(0,207,239,${a*0.4})`; ctx.lineWidth=1;
+        ctx.strokeRect(atX,tpY,tpW,tpH);
+        const alt2=8420+Math.round(Math.sin(ck_t*0.2)*40);
+        for(let i=-3;i<=3;i++){
+          const v=alt2+i*100;
+          const ty=tpY+tpH/2+i*(tpH/8);
+          ctx.fillStyle=i===0?`rgba(238,242,247,${a})`:`rgba(238,242,247,${a*0.3})`;
+          ctx.font=i===0?`600 ${Math.round(pH*0.065)}px IBM Plex Mono,monospace`:`400 ${Math.round(pH*0.04)}px IBM Plex Mono,monospace`;
+          ctx.textAlign='center'; ctx.fillText(v,atX+tpW/2,ty+4);
+        }
+        ctx.fillStyle=`rgba(0,207,239,${a*0.7})`;
+        ctx.font=`400 ${Math.round(pH*0.05)}px IBM Plex Mono,monospace`;
+        ctx.textAlign='center'; ctx.fillText('FT',atX+tpW/2,tpY+pH*0.04);
+
+        // Heading arc
+        const hdg=73+Math.round(Math.sin(ck_t*0.15)*2);
+        const hbY2=scrY+pH-pH*0.12, hbX=pX+pW*0.25, hbW=pW*0.5, hbH=pH*0.1;
+        ctx.fillStyle=`rgba(4,10,20,${a*0.88})`;
+        ctx.fillRect(hbX,hbY2,hbW,hbH);
+        ctx.strokeStyle=`rgba(0,207,239,${a*0.4})`; ctx.lineWidth=1;
+        ctx.strokeRect(hbX,hbY2,hbW,hbH);
+        ctx.fillStyle=`rgba(238,242,247,${a})`;
+        ctx.font=`600 ${Math.round(pH*0.075)}px IBM Plex Mono,monospace`;
+        ctx.textAlign='center';
+        ctx.fillText(String(hdg).padStart(3,'0')+'°',hbX+hbW/2,hbY2+hbH*0.75);
+        for(let d=-4;d<=4;d++){
+          const hx2=hbX+hbW/2+d*(hbW/10);
+          ctx.strokeStyle=`rgba(238,242,247,${a*(d===0?0.6:0.2)})`;
+          ctx.lineWidth=d===0?1.5:1;
+          ctx.beginPath(); ctx.moveTo(hx2,hbY2); ctx.lineTo(hx2,hbY2+(d===0?8:5)); ctx.stroke();
+        }
+
+        // AP status bar
+        ctx.fillStyle=`rgba(0,214,143,${a*0.08})`;
+        ctx.fillRect(pX+pW*0.2,scrY+pH*0.9,pW*0.6,pH*0.085);
+        ctx.strokeStyle=`rgba(0,214,143,${a*0.3})`; ctx.lineWidth=1;
+        ctx.strokeRect(pX+pW*0.2,scrY+pH*0.9,pW*0.6,pH*0.085);
+        ctx.fillStyle=`rgba(0,214,143,${a})`;
+        ctx.font=`500 ${Math.round(pH*0.055)}px IBM Plex Mono,monospace`;
+        ctx.textAlign='center';
+        ctx.fillText('AP  ·  LNAV  ·  VNAV PTH',pX+pW/2,scrY+pH*0.95);
+      }
+
+      // ── MFD — AI feed ──
+      if(sc.type==='mfd'){
+        const mX=sc.x, mY=scrY, mW=sc.w, mH=scrH;
+        const scroll=(ck_t*0.5)%agentFeed.length;
+        const lh=mH*0.125;
+        for(let i=0;i<6;i++){
+          const idx=(Math.floor(scroll)+i)%agentFeed.length;
+          const f=agentFeed[idx];
+          const ly=mY+mH*0.16+i*lh;
+          if(ly>mY+mH*0.90) continue;
+          const isGreen=f.col.startsWith('0,214');
+          ctx.fillStyle=`rgba(${f.col},${a*(isGreen?0.85:0.45)})`;
+          ctx.font=`400 ${Math.round(mH*0.075)}px IBM Plex Mono,monospace`;
+          ctx.textAlign='left';
+          ctx.fillText('['+f.label+']  '+f.text, mX+10, ly+lh*0.7);
+          // Row separator
+          ctx.strokeStyle=`rgba(${f.col},${a*0.08})`; ctx.lineWidth=0.5;
+          ctx.beginPath(); ctx.moveTo(mX+8,ly+lh); ctx.lineTo(mX+mW-8,ly+lh); ctx.stroke();
+        }
+        // Live cursor
+        const curA=0.4+0.6*Math.abs(Math.sin(ck_t*3));
+        ctx.fillStyle=`rgba(0,214,143,${a*curA})`;
+        ctx.fillRect(mX+10,mY+mH*0.90,mW*0.07,mH*0.06);
+        // Live indicator
+        ctx.font=`500 ${Math.round(mH*0.065)}px IBM Plex Mono,monospace`;
+        ctx.fillStyle=`rgba(0,214,143,${a*0.6})`;
+        ctx.textAlign='right';
+        ctx.fillText('● LIVE', mX+mW-8, mY+mH*0.10);
+      }
+
+      // ── EIS ──
+      if(sc.type==='eis'){
+        const eX=sc.x, eY=scrY, eW=sc.w, eH=scrH;
+        const n1=91.8+Math.sin(ck_t*0.4)*1.4;
+        const itt=780+Math.round(Math.sin(ck_t*0.35)*12);
+        const ng=98.2+Math.sin(ck_t*0.28)*0.8;
+        const torq=72+Math.round(Math.sin(ck_t*0.32)*3);
+
+        // N1 arc gauge
+        const gCX=eX+eW/2, gCY=eY+eH*0.48, gR=eH*0.25;
+        ctx.strokeStyle=`rgba(30,50,80,${a*0.8})`; ctx.lineWidth=6;
+        ctx.beginPath(); ctx.arc(gCX,gCY,gR,Math.PI*0.75,Math.PI*2.25); ctx.stroke();
+        const n1A=(n1/100)*(Math.PI*1.5);
+        const arcCol=n1>95?'255,59,80':n1>90?'245,166,35':'0,207,239';
+        ctx.strokeStyle=`rgba(${arcCol},${a})`; ctx.lineWidth=5;
+        ctx.beginPath(); ctx.arc(gCX,gCY,gR,Math.PI*0.75,Math.PI*0.75+n1A); ctx.stroke();
+        ctx.fillStyle=`rgba(245,166,35,${a})`;
+        ctx.font=`700 ${Math.round(eH*0.14)}px IBM Plex Mono,monospace`;
+        ctx.textAlign='center'; ctx.fillText(n1.toFixed(1)+'%',gCX,gCY+6);
+        ctx.font=`400 ${Math.round(eH*0.07)}px IBM Plex Mono,monospace`;
+        ctx.fillStyle=`rgba(245,166,35,${a*0.6})`;
+        ctx.fillText('N1',gCX,gCY+eH*0.14);
+
+        // Data rows
+        const rows=[
+          {l:'ITT', v:itt+'°C', c:'245,166,35'},
+          {l:'Ng',  v:ng.toFixed(1)+'%', c:'0,207,239'},
+          {l:'TRQ', v:torq+'%', c:'0,214,143'},
+        ];
+        rows.forEach((r,i)=>{
+          const ry=eY+eH*0.77+i*(eH*0.075);
+          ctx.fillStyle=`rgba(${r.c},${a*0.45})`;
+          ctx.font=`400 ${Math.round(eH*0.065)}px IBM Plex Mono,monospace`;
+          ctx.textAlign='left'; ctx.fillText(r.l,eX+8,ry);
+          ctx.fillStyle=`rgba(${r.c},${a*0.9})`;
+          ctx.font=`600 ${Math.round(eH*0.065)}px IBM Plex Mono,monospace`;
+          ctx.textAlign='right'; ctx.fillText(r.v,eX+eW-8,ry);
+        });
+      }
+    });
+
+    // ── Windshield frame & pillars ──
+    ctx.fillStyle=`rgba(5,9,16,${a})`;
+    // Glareshield
+    ctx.fillRect(0,0,cw,ch*0.055);
+    // Left A-pillar
+    ctx.beginPath();
+    ctx.moveTo(0,0); ctx.lineTo(cw*0.07,0); ctx.lineTo(cw*0.07,ch*0.65); ctx.lineTo(0,ch*0.70); ctx.closePath(); ctx.fill();
+    // Right A-pillar
+    ctx.beginPath();
+    ctx.moveTo(cw,0); ctx.lineTo(cw*0.93,0); ctx.lineTo(cw*0.93,ch*0.65); ctx.lineTo(cw,ch*0.70); ctx.closePath(); ctx.fill();
+    // Center pillar (between windshields)
+    ctx.beginPath();
+    ctx.moveTo(cw/2-7,ch*0.055); ctx.lineTo(cw/2+7,ch*0.055);
+    ctx.lineTo(cw/2+9,ch*0.65); ctx.lineTo(cw/2-9,ch*0.65); ctx.closePath(); ctx.fill();
+
+    // Pillar edge highlights (specular)
+    ctx.strokeStyle=`rgba(0,207,239,${a*0.12})`; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(cw*0.07,0); ctx.lineTo(cw*0.07,ch*0.65); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cw*0.93,0); ctx.lineTo(cw*0.93,ch*0.65); ctx.stroke();
+
+    // Glareshield reflection on glass (very subtle)
+    const glassR=ctx.createLinearGradient(0,ch*0.055,0,ch*0.18);
+    glassR.addColorStop(0,`rgba(0,207,239,${a*0.04})`);
+    glassR.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=glassR;
+    ctx.fillRect(cw*0.07,ch*0.055,cw*0.86,ch*0.13);
+
+    // ── Vignette ──
+    const vig=ctx.createRadialGradient(cw/2,ch*0.35,ch*0.08,cw/2,ch*0.35,ch*0.85);
+    vig.addColorStop(0,'rgba(0,0,0,0)');
+    vig.addColorStop(0.65,'rgba(2,4,10,0)');
+    vig.addColorStop(1,`rgba(2,4,10,${a*0.88})`);
+    ctx.fillStyle=vig; ctx.fillRect(0,0,cw,ch);
+  }
+
+  // ─── MAIN RENDER ─────────────────────────────────────────
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    const elapsed = t % TOTAL;
+
+    if (elapsed < T.ext) {
+      // Phase 1: Exterior
+      const prog = elapsed / T.ext;
+      drawAtmosphere(prog);
+      drawClouds(1);
+      drawCityGlow(1);
+      const bank = Math.sin(t*0.28)*0.04;
+      const sc   = 0.50 + Math.sin(t*0.14)*0.015;
+      const jx   = W*0.55 + Math.sin(t*0.19)*W*0.01;
+      const jy   = H*0.41 + Math.sin(t*0.24)*H*0.015;
+      drawAircraftSilhouette(jx,jy,sc,bank,0);
+    }
+    else if (elapsed < T.ext + T.zoom) {
+      // Phase 2: Zoom
+      const prog = (elapsed - T.ext) / T.zoom;
+      const ep   = ease(prog);
+      drawAtmosphere(1);
+      drawClouds(clamp(1-ep*1.8,0,1));
+      drawCityGlow(clamp(1-ep*1.8,0,1));
+      const sc2 = 0.50 + ep*5.5;
+      const jx2 = W*0.55+(W*0.5-W*0.55)*ep;
+      const jy2 = H*0.41+(H*0.48-H*0.41)*ep;
+      drawAircraftSilhouette(jx2,jy2,sc2,0,ep);
+      drawZoomTransition(prog);
+      if(ep>0.55) drawCockpit(clamp((ep-0.55)/0.45,0,1));
+    }
+    else if (elapsed < T.ext + T.zoom + T.cockpit) {
+      // Phase 3: Cockpit
+      ck_t += 0.016;
+      drawCockpit(1);
+    }
+    else {
+      // Phase 4: Fade back to exterior — smooth crossfade
+      const prog = (elapsed - T.ext - T.zoom - T.cockpit) / T.fade;
+      const ep   = ease(prog);
+      ck_t += 0.016;
+
+      // Exterior fades in from the start
+      const extA = clamp(ep * 1.2, 0, 1);
+      drawAtmosphere(extA);
+      drawClouds(extA);
+      drawCityGlow(extA);
+      // Use same animated position as Phase 1 so the loop is seamless
+      const bank = Math.sin(t*0.28)*0.04;
+      const sc   = 0.50 + Math.sin(t*0.14)*0.015;
+      const jx   = W*0.55 + Math.sin(t*0.19)*W*0.01;
+      const jy   = H*0.41 + Math.sin(t*0.24)*H*0.015;
+      drawAircraftSilhouette(jx, jy, sc, bank, 0);
+
+      // Cockpit fades out — start fading immediately, done at 75%
+      const cockpitA = clamp(1 - ep / 0.75, 0, 1);
+      if (cockpitA > 0) drawCockpit(cockpitA);
+    }
+  }
+
+  function animate() { t += 0.016; draw(); requestAnimationFrame(animate); }
+  animate();
+})();
+
+/* ───────────────────────────────
+   SCROLL REVEAL
+─────────────────────────────── */
+const reveals = document.querySelectorAll('.phase-card, .instr-card, .team-card');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15 });
+reveals.forEach(el => observer.observe(el));
+
+/* ───────────────────────────────
+   TWEAKS
+─────────────────────────────── */
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accentColor": "#00cfef",
+  "amberColor": "#f5a623",
+  "heroTitle": "On ne vend pas de l'IA qui répond.",
+  "showQR": false
+}/*EDITMODE-END*/;
+
+let tweakValues = { ...TWEAK_DEFAULTS };
+
+function applyTweaks(v) {
+  document.documentElement.style.setProperty('--cyan', v.accentColor);
+  document.documentElement.style.setProperty('--amber', v.amberColor);
+  document.querySelector('h1').innerHTML = v.heroTitle;
+  document.querySelector('.qr-badge').style.display = v.showQR ? '' : 'none';
+}
+
+applyTweaks(tweakValues);
+
+// Tweaks panel
+const tweakPanel = document.createElement('div');
+tweakPanel.id = 'tweaks-panel';
+tweakPanel.style.cssText = `
+  display:none; position:fixed; bottom:24px; right:24px; z-index:9999;
+  background:#070d17; border:1px solid rgba(0,207,239,0.25);
+  padding:24px; width:280px; font-family:'IBM Plex Mono',monospace;
+`;
+tweakPanel.innerHTML = `
+  <div style="font-size:11px;letter-spacing:0.2em;color:#00cfef;text-transform:uppercase;margin-bottom:20px;">Tweaks</div>
+  <label style="display:block;font-size:10px;color:rgba(238,242,247,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Couleur accent (cyan)</label>
+  <input type="color" value="${tweakValues.accentColor}" id="tw-accent" style="width:100%;height:32px;border:none;background:none;cursor:pointer;margin-bottom:16px;">
+  <label style="display:block;font-size:10px;color:rgba(238,242,247,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Couleur accent (ambre)</label>
+  <input type="color" value="${tweakValues.amberColor}" id="tw-amber" style="width:100%;height:32px;border:none;background:none;cursor:pointer;margin-bottom:16px;">
+  <label style="display:block;font-size:10px;color:rgba(238,242,247,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Titre hero</label>
+  <input type="text" id="tw-title" value="${tweakValues.heroTitle}" style="width:100%;background:rgba(238,242,247,0.05);border:1px solid rgba(238,242,247,0.1);color:#eef2f7;padding:8px;font-family:inherit;font-size:11px;margin-bottom:16px;">
+  <label style="display:flex;align-items:center;gap:8px;font-size:10px;color:rgba(238,242,247,0.5);letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;">
+    <input type="checkbox" id="tw-qr" ${tweakValues.showQR ? 'checked' : ''}> Afficher QR code
+  </label>
+`;
+document.body.appendChild(tweakPanel);
+
+tweakPanel.querySelector('#tw-accent').addEventListener('input', e => {
+  tweakValues.accentColor = e.target.value;
+  applyTweaks(tweakValues);
+  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: tweakValues }, '*');
+});
+tweakPanel.querySelector('#tw-amber').addEventListener('input', e => {
+  tweakValues.amberColor = e.target.value;
+  applyTweaks(tweakValues);
+  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: tweakValues }, '*');
+});
+tweakPanel.querySelector('#tw-title').addEventListener('input', e => {
+  tweakValues.heroTitle = e.target.value;
+  applyTweaks(tweakValues);
+  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: tweakValues }, '*');
+});
+tweakPanel.querySelector('#tw-qr').addEventListener('change', e => {
+  tweakValues.showQR = e.target.checked;
+  applyTweaks(tweakValues);
+  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: tweakValues }, '*');
+});
+
+window.addEventListener('message', e => {
+  if (e.data?.type === '__activate_edit_mode') tweakPanel.style.display = 'block';
+  if (e.data?.type === '__deactivate_edit_mode') tweakPanel.style.display = 'none';
+});
+window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+</script>
+
+</body>
+</html>
