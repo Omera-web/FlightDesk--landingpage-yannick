@@ -12,9 +12,28 @@ python3 -m http.server 8080
 
 Ouvrez [http://127.0.0.1:8080](http://127.0.0.1:8080).
 
-## Déploiement GitHub Pages
+## Publier sur GitHub (CLI)
 
-Dans les réglages du dépôt GitHub : **Settings → Pages** → choisir la branche (souvent `main`) et le dossier `/ (root)`.
+Depuis ce dossier, connectez-vous une fois, puis créez le dépôt et poussez :
+
+```bash
+gh auth login
+gh repo create flightdesk-landing --public --source=. --remote=origin --push
+```
+
+(Changez le nom `flightdesk-landing` si besoin.)
+
+**Sans** la CLI : créez un dépôt vide sur GitHub, puis :
+
+```bash
+git remote add origin https://github.com/VOTRE_COMPTE/NOM_DU_REPO.git
+git push -u origin main
+```
+
+## GitHub Pages
+
+Dans le dépôt : **Settings → Pages** → source : branche `main`, dossier `/ (root)`.
+Le site sera servi sur `https://VOTRE_COMPTE.github.io/NOM_DU_REPO/`.
 
 ## Archive
 
