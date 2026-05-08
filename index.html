@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FlightDesk — Beta</title>
+<title>FlightDesk Beta</title>
 <template id="__bundler_thumbnail" data-bg-color="#04080f">
   <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
     <!-- Sky -->
@@ -44,730 +44,790 @@
   </svg>
 </template>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600;800;900&family=Barlow+Condensed:wght@700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #04080f;
-    --bg2: #070d17;
-    --white: #eef2f7;
-    --amber: #f5a623;
-    --cyan: #00cfef;
-    --green: #00d68f;
-    --red: #ff3b50;
-    --muted: rgba(238,242,247,0.35);
-    --border: rgba(238,242,247,0.08);
-    --border-active: rgba(0,207,239,0.25);
+    --bg-base:     #ffffff;
+    --bg-surface:  #f8f8fb;
+    --bg-elevated: #f2f1f8;
+    --bg-subtle:   #e8e6f4;
+
+    --accent:       #7c3aed;
+    --accent-dim:   #a855f7;
+    --accent-light: #ede9fe;
+    --accent-glow:  rgba(124,58,237,0.12);
+
+    --text-primary:   #0f0d1a;
+    --text-secondary: #4b4869;
+    --text-muted:     #9591b0;
+    --text-accent:    #7c3aed;
+
+    --border:        rgba(0,0,0,0.07);
+    --border-accent: rgba(124,58,237,0.2);
+
+    --shadow-sm:  0 1px 3px rgba(0,0,0,0.07);
+    --shadow-md:  0 4px 20px rgba(0,0,0,0.08);
+    --shadow-glow: 0 0 40px rgba(124,58,237,0.12);
+
+    --green: #16a34a;
   }
 
   html { scroll-behavior: smooth; }
 
   body {
-    background: var(--bg);
-    color: var(--white);
-    font-family: 'Barlow', sans-serif;
-    font-weight: 300;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
     overflow-x: hidden;
   }
 
-  /* ── NAVBAR ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
+  a { color: inherit; }
+
+  /* NAV */
+  .site-nav {
+    position: sticky;
+    top: 0;
     z-index: 100;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 48px;
+    gap: 16px;
+    padding: 14px 24px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border);
-    background: rgba(4,8,15,0.85);
-    backdrop-filter: blur(12px);
   }
-  .nav-logo {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 14px;
-    letter-spacing: 0.12em;
-    color: var(--cyan);
-    text-transform: uppercase;
-  }
-  .nav-status {
+  .nav-left {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-family: 'IBM Plex Mono', monospace;
+    gap: 12px;
+    min-width: 0;
+  }
+  .nav-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+  .nav-plane {
+    flex-shrink: 0;
+    color: var(--accent);
+  }
+  .nav-title {
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+  }
+  .nav-beta-pill {
     font-size: 11px;
-    color: var(--green);
-    letter-spacing: 0.1em;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-  }
-  .status-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--green);
-    animation: pulse-green 2s ease-in-out infinite;
-  }
-  @keyframes pulse-green {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 4px 10px;
+    border-radius: 99px;
   }
   .nav-cta {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    color: var(--bg);
-    background: var(--cyan);
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
     padding: 10px 20px;
-    border: none;
-    cursor: pointer;
+    border-radius: 8px;
     text-decoration: none;
-    text-transform: uppercase;
-    transition: background 0.2s, opacity 0.2s;
+    transition: opacity 0.15s ease, transform 0.15s ease;
   }
-  .nav-cta:hover { background: #00b8d4; }
+  .nav-cta:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
 
-  /* ── HERO ── */
+  /* HERO */
   #hero {
     position: relative;
-    height: 100vh;
-    min-height: 700px;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     justify-content: flex-end;
-    padding: 0 80px 80px;
+    padding: 100px 24px 88px;
     overflow: hidden;
+    background: var(--bg-base);
   }
-
-  #horizon-canvas {
+  .hero-glow {
     position: absolute;
-    top: 0; right: 0;
-    width: 55%;
-    height: 100%;
-    opacity: 0.9;
-  }
-
-  .hero-bg-lines {
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(to right, var(--bg) 38%, transparent 65%),
-      linear-gradient(to top, rgba(4,8,15,0.6) 0%, transparent 40%);
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140%;
+    max-width: 900px;
+    height: 55%;
+    background: radial-gradient(ellipse at center top, rgba(124,58,237,0.14) 0%, transparent 65%);
     pointer-events: none;
-    z-index: 1;
+    z-index: 0;
   }
-
-  /* Grid overlay */
   .hero-grid {
     position: absolute;
     inset: 0;
     z-index: 0;
     background-image:
-      linear-gradient(rgba(0,207,239,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,207,239,0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
+      linear-gradient(rgba(15,13,26,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15,13,26,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
   }
-
+  #horizon-canvas {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 55%;
+    height: 100%;
+    opacity: 0.95;
+    z-index: 1;
+  }
+  .hero-bg-lines {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right, var(--bg-base) 32%, rgba(255,255,255,0.78) 55%, rgba(255,255,255,0.35) 100%),
+      linear-gradient(to top, var(--bg-base) 0%, transparent 42%);
+    pointer-events: none;
+    z-index: 2;
+  }
   .hero-content {
     position: relative;
-    z-index: 2;
-    max-width: 700px;
+    z-index: 3;
+    max-width: 720px;
   }
-
-  .hero-label {
-    font-family: 'IBM Plex Mono', monospace;
+  #hero h1 {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 800;
+    font-size: clamp(40px, 8vw, 72px);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: hero-rise 0.7s 0.15s forwards;
+  }
+  .hero-beta-badge {
+    display: inline-flex;
+    align-items: center;
     font-size: 11px;
-    letter-spacing: 0.2em;
-    color: var(--amber);
+    font-weight: 600;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin-bottom: 28px;
-    opacity: 0;
-    transform: translateY(10px);
-    animation: fade-up 0.6s 0.2s forwards;
-  }
-
-  h1 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: clamp(52px, 6vw, 96px);
-    line-height: 0.95;
-    letter-spacing: -0.01em;
-    text-transform: uppercase;
-    margin-bottom: 16px;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 8px 14px;
+    border-radius: 99px;
+    margin-bottom: 20px;
     opacity: 0;
     transform: translateY(20px);
-    animation: fade-up 0.7s 0.4s forwards;
+    animation: hero-rise 0.65s 0.35s forwards;
   }
-
   .hero-sub {
-    font-size: clamp(18px, 2vw, 24px);
-    font-weight: 300;
-    color: var(--muted);
-    margin-bottom: 40px;
-    line-height: 1.4;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    max-width: 540px;
     opacity: 0;
     transform: translateY(20px);
-    animation: fade-up 0.7s 0.6s forwards;
+    animation: hero-rise 0.65s 0.5s forwards;
   }
-
   .hero-cta-row {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 24px;
+    gap: 16px;
+    margin-bottom: 48px;
     opacity: 0;
     transform: translateY(20px);
-    animation: fade-up 0.7s 0.8s forwards;
+    animation: hero-rise 0.65s 0.65s forwards;
   }
-
   .btn-primary {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    letter-spacing: 0.1em;
-    color: var(--bg);
-    background: var(--cyan);
-    padding: 16px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--accent);
+    padding: 14px 28px;
     border: none;
+    border-radius: 8px;
     cursor: pointer;
     text-decoration: none;
-    text-transform: uppercase;
-    transition: background 0.2s, transform 0.2s;
+    transition: opacity 0.15s ease, transform 0.15s ease, box-shadow 0.2s ease;
   }
-  .btn-primary:hover { background: #00b8d4; transform: translateX(3px); }
-  .btn-primary .arrow { font-size: 16px; }
-
+  .btn-primary:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-glow);
+  }
+  .btn-primary .arrow { font-size: 18px; line-height: 1; }
+  .btn-light {
+    background: #fff;
+    color: var(--accent);
+  }
+  .btn-light:hover {
+    opacity: 0.95;
+    box-shadow: var(--shadow-md);
+  }
+  .hero-instruments-mockup {
+    max-width: 560px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: hero-rise 0.7s 0.85s forwards;
+  }
+  .hero-instruments-mockup svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
   .hero-scroll-hint {
     position: absolute;
-    bottom: 32px;
+    bottom: 28px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
+    z-index: 3;
     opacity: 0;
-    animation: fade-up 0.6s 1.4s forwards;
+    animation: hero-rise 0.6s 1.2s forwards;
   }
   .scroll-line {
     width: 1px;
     height: 40px;
-    background: linear-gradient(to bottom, transparent, var(--cyan));
-    animation: scroll-anim 1.8s 1.4s ease-in-out infinite;
+    background: linear-gradient(to bottom, transparent, var(--accent-dim));
+    animation: scroll-anim 1.8s 1.2s ease-in-out infinite;
   }
   @keyframes scroll-anim {
     0% { transform: scaleY(0); transform-origin: top; opacity: 1; }
     50% { transform: scaleY(1); transform-origin: top; opacity: 1; }
     100% { transform: scaleY(1); transform-origin: bottom; opacity: 0; }
   }
-
-  /* QR placeholder — hero bottom-right */
-  .qr-badge {
-    position: absolute;
-    bottom: 48px;
-    right: 48px;
-    z-index: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    opacity: 0;
-    animation: fade-up 0.6s 1.6s forwards;
-  }
-  .qr-box {
-    width: 64px; height: 64px;
-    background: var(--white);
-    padding: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .qr-box svg { width: 52px; height: 52px; }
-  .qr-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    color: var(--muted);
-    text-transform: uppercase;
-    text-align: center;
+  @keyframes hero-rise {
+    to { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── DIVIDER ── */
-  .divider {
-    width: 100%;
-    height: 1px;
-    background: var(--border);
-  }
-
-  /* ── SECTIONS COMMUNS ── */
+  /* SECTIONS */
   section {
-    padding: 100px 80px;
+    padding: 80px 24px;
   }
   .section-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    color: var(--cyan);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .section-label::before {
-    content: '';
-    display: block;
-    width: 24px;
-    height: 1px;
-    background: var(--cyan);
+    color: var(--text-accent);
+    margin-bottom: 12px;
   }
   .section-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: clamp(36px, 4vw, 64px);
-    line-height: 1;
-    text-transform: uppercase;
-    letter-spacing: -0.01em;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: clamp(32px, 5vw, 48px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
     margin-bottom: 16px;
   }
   .section-body {
     font-size: 17px;
-    font-weight: 300;
-    color: var(--muted);
+    font-weight: 400;
+    color: var(--text-secondary);
     line-height: 1.65;
-    max-width: 560px;
+    max-width: 520px;
   }
 
-  /* ── MANIFESTE ── */
+  /* fade-up sections (IntersectionObserver adds .is-inview) */
+  .fade-up:not(.is-inview) .manifeste-header,
+  .fade-up:not(.is-inview) .instruments-intro,
+  .fade-up:not(.is-inview) .equipage-intro {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  .fade-up:not(.is-inview) #cta-final .cta-tag,
+  .fade-up:not(.is-inview) #cta-final .section-title,
+  .fade-up:not(.is-inview) #cta-final .section-body,
+  .fade-up:not(.is-inview) #cta-final .cta-final-row {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .fade-up:not(.is-inview) .phase-card,
+  .fade-up:not(.is-inview) .instr-card,
+  .fade-up:not(.is-inview) .team-card {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  .manifeste-header,
+  .instruments-intro,
+  .equipage-intro,
+  #cta-final .cta-tag,
+  #cta-final .section-title,
+  #cta-final .section-body,
+  #cta-final .cta-final-row {
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.is-inview .manifeste-header,
+  .fade-up.is-inview .instruments-intro,
+  .fade-up.is-inview .equipage-intro,
+  .fade-up.is-inview #cta-final .cta-tag,
+  .fade-up.is-inview #cta-final .section-title,
+  .fade-up.is-inview #cta-final .section-body,
+  .fade-up.is-inview #cta-final .cta-final-row,
+  .fade-up.is-inview .phase-card,
+  .fade-up.is-inview .instr-card,
+  .fade-up.is-inview .team-card {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .fade-up.is-inview .manifeste-header { transition-delay: 0.04s; }
+  .fade-up.is-inview .instruments-intro { transition-delay: 0.04s; }
+  .fade-up.is-inview .equipage-intro { transition-delay: 0.04s; }
+  .fade-up.is-inview #cta-final .cta-tag { transition-delay: 0.05s; }
+  .fade-up.is-inview #cta-final .section-title { transition-delay: 0.1s; }
+  .fade-up.is-inview #cta-final .section-body { transition-delay: 0.14s; }
+  .fade-up.is-inview #cta-final .cta-final-row { transition-delay: 0.18s; }
+  .fade-up.is-inview .phase-card:nth-child(1) { transition-delay: 0.08s; }
+  .fade-up.is-inview .phase-card:nth-child(2) { transition-delay: 0.14s; }
+  .fade-up.is-inview .phase-card:nth-child(3) { transition-delay: 0.2s; }
+  .fade-up.is-inview .instr-card:nth-child(1) { transition-delay: 0.06s; }
+  .fade-up.is-inview .instr-card:nth-child(2) { transition-delay: 0.1s; }
+  .fade-up.is-inview .instr-card:nth-child(3) { transition-delay: 0.14s; }
+  .fade-up.is-inview .instr-card:nth-child(4) { transition-delay: 0.18s; }
+  .fade-up.is-inview .instr-card:nth-child(5) { transition-delay: 0.22s; }
+  .fade-up.is-inview .instr-card:nth-child(6) { transition-delay: 0.26s; }
+  .fade-up.is-inview .team-card:nth-child(1) { transition-delay: 0.1s; }
+  .fade-up.is-inview .team-card:nth-child(2) { transition-delay: 0.16s; }
+
+  /* MANIFESTE / phases */
   #manifeste {
-    background: var(--bg2);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
+    background: var(--bg-surface);
   }
   .manifeste-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 40px;
-    margin-bottom: 72px;
+    gap: 32px;
+    margin-bottom: 48px;
     flex-wrap: wrap;
+    transition: opacity 0.6s ease, transform 0.6s ease;
   }
   .phases-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
   .phase-card {
-    background: var(--bg);
-    padding: 40px 36px;
     position: relative;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
     overflow: hidden;
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.6s, transform 0.6s;
+    transition: opacity 0.55s ease, transform 0.55s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   }
-  .phase-card.visible { opacity: 1; transform: none; }
-  .phase-card:nth-child(2) { transition-delay: 0.1s; }
-  .phase-card:nth-child(3) { transition-delay: 0.2s; }
-
+  .phase-card:hover {
+    border-color: var(--border-accent);
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-2px);
+  }
+  .phase-watermark {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: 72px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--accent-light);
+    pointer-events: none;
+    user-select: none;
+  }
+  .phase-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 16px;
+    color: var(--accent);
+  }
   .phase-num {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: var(--amber);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    margin-bottom: 20px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
   }
   .phase-title {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
     font-weight: 700;
-    font-size: 28px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+    color: var(--text-primary);
   }
   .phase-body {
     font-size: 15px;
-    font-weight: 300;
-    color: var(--muted);
-    line-height: 1.7;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    position: relative;
+    z-index: 1;
   }
-  .phase-accent-line {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-  }
-  .phase-card:nth-child(1) .phase-accent-line { background: var(--amber); }
-  .phase-card:nth-child(2) .phase-accent-line { background: var(--cyan); }
-  .phase-card:nth-child(3) .phase-accent-line { background: var(--green); }
 
-  /* ── INSTRUMENTS ── */
+  /* INSTRUMENTS */
   #instruments {
-    border-bottom: 1px solid var(--border);
+    background: var(--bg-base);
   }
   .instruments-intro {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    align-items: end;
-    margin-bottom: 64px;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-bottom: 40px;
+    transition: opacity 0.6s ease, transform 0.6s ease;
   }
   .instruments-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
   .instr-card {
-    background: var(--bg2);
-    padding: 36px 32px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: opacity 0.55s ease, transform 0.55s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     position: relative;
-    border-bottom: none;
-    cursor: default;
-    transition: background 0.25s;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s, transform 0.5s, background 0.25s;
   }
-  .instr-card.visible { opacity: 1; transform: none; }
-  .instr-card:nth-child(2) { transition-delay: 0.08s; }
-  .instr-card:nth-child(3) { transition-delay: 0.16s; }
-  .instr-card:nth-child(4) { transition-delay: 0.24s; }
-  .instr-card:nth-child(5) { transition-delay: 0.32s; }
-  .instr-card:nth-child(6) { transition-delay: 0.40s; }
-  .instr-card:hover { background: rgba(0,207,239,0.04); }
-  .instr-card:hover .instr-border { background: var(--cyan); }
-
-  .instr-border {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: var(--border);
-    transition: background 0.25s;
+  .instr-card:hover {
+    border-color: var(--border-accent);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
   }
-
+  .instr-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
   .instr-id {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: ui-monospace, 'Cousine', monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+  }
+  .instr-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-size: 10px;
-    letter-spacing: 0.2em;
-    color: var(--muted);
-    margin-bottom: 28px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+  .instr-status-pill::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
   }
   .instr-icon {
     width: 36px;
     height: 36px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    margin-bottom: 12px;
+    color: var(--accent);
   }
   .instr-title {
-    font-family: 'Barlow', sans-serif;
-    font-weight: 800;
-    font-size: 18px;
-    letter-spacing: 0.01em;
-    margin-bottom: 12px;
-    line-height: 1.2;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-primary);
   }
   .instr-body {
     font-size: 14px;
-    font-weight: 300;
-    color: var(--muted);
-    line-height: 1.65;
-  }
-  .instr-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    color: var(--green);
-    text-transform: uppercase;
-    margin-top: 20px;
-  }
-  .instr-status::before {
-    content: '';
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--green);
+    color: var(--text-secondary);
+    line-height: 1.6;
   }
 
-  /* ── ÉQUIPAGE ── */
+  /* TEAM */
   #equipage {
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
+    background: var(--bg-surface);
+  }
+  .equipage-intro {
+    margin-bottom: 40px;
+    transition: opacity 0.6s ease, transform 0.6s ease;
   }
   .team-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    margin-top: 60px;
-    max-width: 800px;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-width: 880px;
   }
   .team-card {
-    background: var(--bg);
-    padding: 44px 40px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+    transition: opacity 0.55s ease, transform 0.55s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .team-card:hover {
+    border-color: var(--border-accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .team-card-top {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s, transform 0.6s;
-    position: relative;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 16px;
   }
-  .team-card.visible { opacity: 1; transform: none; }
-  .team-card:nth-child(2) { transition-delay: 0.15s; }
-  .team-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--border-active);
+  .team-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    color: #fff;
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    flex-shrink: 0;
   }
-  .team-role {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: var(--amber);
+  .team-meta { flex: 1; min-width: 0; }
+  .team-role-pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 5px 12px;
+    border-radius: 99px;
+    margin-bottom: 10px;
   }
   .team-name {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
     font-weight: 700;
-    font-size: 32px;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+    color: var(--text-primary);
+  }
+  .team-role-detail {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
   }
   .team-desc {
-    font-size: 15px;
-    color: var(--muted);
-    font-weight: 300;
-    line-height: 1.6;
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    margin-bottom: 14px;
   }
   .team-linkedin {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    color: var(--cyan);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
     text-decoration: none;
-    text-transform: uppercase;
-    margin-top: 8px;
-    transition: opacity 0.2s;
+    transition: opacity 0.15s ease;
   }
-  .team-linkedin:hover { opacity: 0.7; }
+  .team-linkedin:hover {
+    text-decoration: underline;
+    opacity: 0.9;
+  }
+  .team-linkedin svg { flex-shrink: 0; opacity: 0.85; }
 
-  /* ── CTA FINAL ── */
+  /* CTA FINAL */
+  .cta-wrap {
+    padding: 0 24px 80px;
+    background: var(--bg-base);
+  }
   #cta-final {
     text-align: center;
-    padding: 120px 80px;
+    padding: 80px 28px;
+    max-width: 960px;
+    margin: 0 auto;
+    border-radius: 24px 24px 0 0;
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    color: #fff;
     position: relative;
     overflow: hidden;
   }
-  #cta-final::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,207,239,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,207,239,0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
-  }
-  .cta-content {
-    position: relative;
-    z-index: 1;
-  }
-  .cta-tag {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    color: var(--amber);
-    text-transform: uppercase;
-    margin-bottom: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-  }
-  .cta-tag::before, .cta-tag::after {
-    content: '';
-    display: block;
-    width: 32px;
-    height: 1px;
-    background: var(--amber);
+  #cta-final .section-label {
+    color: rgba(255,255,255,0.85);
   }
   #cta-final .section-title {
-    font-size: clamp(44px, 6vw, 88px);
-    margin-bottom: 20px;
+    color: #fff;
+    margin-bottom: 12px;
   }
   #cta-final .section-body {
-    font-size: 20px;
-    max-width: 420px;
-    margin: 0 auto 48px;
-    text-align: center;
+    color: rgba(255,255,255,0.92);
+    margin: 0 auto 36px;
+    max-width: 440px;
   }
-
+  .cta-tag {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 16px;
+  }
   .cta-final-row {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 32px;
+    gap: 20px;
   }
-
   .limited-seats {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    color: var(--amber);
+    font-size: 12px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    border: 1px solid rgba(245,166,35,0.3);
-    padding: 8px 16px;
-  }
-  .limited-seats::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--amber);
+    color: rgba(255,255,255,0.8);
+    border: 1px solid rgba(255,255,255,0.35);
+    padding: 8px 18px;
+    border-radius: 99px;
   }
 
-  /* ── FOOTER ── */
-  footer {
-    padding: 32px 80px;
+  /* FOOTER */
+  .site-footer {
+    padding: 28px 24px;
     border-top: 1px solid var(--border);
+    background: #fff;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
   }
-  .footer-logo {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    letter-spacing: 0.12em;
-    color: var(--cyan);
-    text-transform: uppercase;
+  .footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
   }
   .footer-copy {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 0.1em;
+    font-size: 13px;
+    color: var(--text-muted);
   }
 
-  /* ── ANIMATIONS ── */
-  @keyframes fade-up {
-    to { opacity: 1; transform: translateY(0); }
+  @media (min-width: 768px) {
+    .site-nav { padding: 14px 40px; }
+    section { padding: 100px 48px; }
+    #hero { padding: 120px 48px 96px; }
+    .manifeste-header { margin-bottom: 64px; }
+    .phases-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .instruments-intro { grid-template-columns: 1fr 1fr; align-items: end; margin-bottom: 56px; }
+    .instruments-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .team-grid { grid-template-columns: repeat(2, 1fr); }
+    .cta-wrap { padding: 0 48px 80px; }
+    .site-footer { padding: 28px 48px; }
   }
 
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    nav { padding: 16px 24px; }
-    section { padding: 72px 24px; }
-    #hero { padding: 0 24px 72px; }
-    h1 { font-size: 48px; }
-    .phases-grid, .instruments-grid { grid-template-columns: 1fr; }
-    .team-grid { grid-template-columns: 1fr; max-width: 100%; }
-    .instruments-intro { grid-template-columns: 1fr; }
-    #hero { height: auto; padding-top: 140px; }
-    #horizon-canvas { width: 100%; height: 50%; top: auto; bottom: 0; opacity: 0.4; }
-    .hero-bg-lines { background: linear-gradient(to top, var(--bg) 30%, rgba(4,8,15,0.7) 70%); }
-    footer { flex-direction: column; gap: 12px; text-align: center; }
-    .qr-badge { display: none; }
-    .manifeste-header { flex-direction: column; }
+  @media (max-width: 767px) {
+    #horizon-canvas {
+      width: 100%;
+      height: 46%;
+      top: 56px;
+      opacity: 0.42;
+    }
+    .hero-bg-lines {
+      background: linear-gradient(to bottom, var(--bg-base) 48%, rgba(255,255,255,0.92) 100%);
+    }
+    #hero {
+      min-height: auto;
+      padding-top: 40px;
+      padding-bottom: 72px;
+    }
   }
+
 </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
-  <span class="nav-logo">FlightDesk</span>
-  <div class="nav-status">
-    <span class="status-dot"></span>
-    Systèmes opérationnels
+<nav class="site-nav" aria-label="Principale">
+  <div class="nav-left">
+    <a class="nav-brand" href="#hero">
+      <svg class="nav-plane" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="currentColor"/></svg>
+      <span class="nav-title">FlightDesk</span>
+      <span class="nav-beta-pill">Beta</span>
+    </a>
   </div>
-  <a href="https://docs.google.com/forms/d/e/1FAIpQLSeAzRhdghZqplhfhZcYypTNL2aP4pqBozRb-XDa2KSsq0PeKA/viewform" target="_blank" class="nav-cta">Prendre son siège →</a>
+  <a href="https://docs.google.com/forms/d/e/1FAIpQLSeAzRhdghZqplhfhZcYypTNL2aP4pqBozRb-XDa2KSsq0PeKA/viewform" target="_blank" rel="noopener noreferrer" class="nav-cta">Prendre son siège</a>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-grid"></div>
-  <canvas id="horizon-canvas"></canvas>
-  <div class="hero-bg-lines"></div>
-
-  <!-- QR code (top-right) -->
-  <div class="qr-badge">
-    <div class="qr-box">
-      <!-- QR code SVG généré pour le lien Google Forms -->
-      <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" fill="#04080f">
-        <rect width="52" height="52" fill="white"/>
-        <!-- Top-left finder -->
-        <rect x="2" y="2" width="18" height="18" fill="#04080f"/>
-        <rect x="4" y="4" width="14" height="14" fill="white"/>
-        <rect x="6" y="6" width="10" height="10" fill="#04080f"/>
-        <!-- Top-right finder -->
-        <rect x="32" y="2" width="18" height="18" fill="#04080f"/>
-        <rect x="34" y="4" width="14" height="14" fill="white"/>
-        <rect x="36" y="6" width="10" height="10" fill="#04080f"/>
-        <!-- Bottom-left finder -->
-        <rect x="2" y="32" width="18" height="18" fill="#04080f"/>
-        <rect x="4" y="34" width="14" height="14" fill="white"/>
-        <rect x="6" y="36" width="10" height="10" fill="#04080f"/>
-        <!-- Data modules (stylized) -->
-        <rect x="22" y="2" width="4" height="4" fill="#04080f"/>
-        <rect x="28" y="2" width="4" height="4" fill="#04080f"/>
-        <rect x="22" y="8" width="4" height="4" fill="#04080f"/>
-        <rect x="22" y="14" width="4" height="4" fill="#04080f"/>
-        <rect x="28" y="8" width="4" height="8" fill="#04080f"/>
-        <rect x="22" y="22" width="4" height="4" fill="#04080f"/>
-        <rect x="28" y="22" width="4" height="4" fill="#04080f"/>
-        <rect x="34" y="22" width="4" height="4" fill="#04080f"/>
-        <rect x="40" y="22" width="8" height="4" fill="#04080f"/>
-        <rect x="22" y="28" width="10" height="4" fill="#04080f"/>
-        <rect x="34" y="28" width="4" height="4" fill="#04080f"/>
-        <rect x="40" y="28" width="8" height="4" fill="#04080f"/>
-        <rect x="22" y="34" width="4" height="4" fill="#04080f"/>
-        <rect x="28" y="34" width="8" height="4" fill="#04080f"/>
-        <rect x="22" y="40" width="4" height="4" fill="#04080f"/>
-        <rect x="28" y="40" width="4" height="8" fill="#04080f"/>
-        <rect x="34" y="40" width="8" height="4" fill="#04080f"/>
-        <rect x="44" y="34" width="4" height="4" fill="#04080f"/>
-        <rect x="40" y="40" width="4" height="8" fill="#04080f"/>
-        <rect x="46" y="40" width="4" height="4" fill="#04080f"/>
-      </svg>
-    </div>
-    <span class="qr-label">Formulaire<br>d'accès beta</span>
-  </div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-grid" aria-hidden="true"></div>
+  <canvas id="horizon-canvas" aria-hidden="true"></canvas>
+  <div class="hero-bg-lines" aria-hidden="true"></div>
 
   <div class="hero-content">
-    <div class="hero-label">Beta Programme - Accès limité</div>
     <h1>On ne vend pas<br>de l'IA qui répond.</h1>
-    <p class="hero-sub">On vend de l'IA qui fait voler l'exécution.</p>
+    <div class="hero-beta-badge">Beta Programme - Accès limité</div>
+    <p class="hero-sub">On ne vend pas de l'IA qui répond. On vend de l'IA qui fait voler l'exécution.</p>
     <div class="hero-cta-row">
-      <a href="https://docs.google.com/forms/d/e/1FAIpQLSeAzRhdghZqplhfhZcYypTNL2aP4pqBozRb-XDa2KSsq0PeKA/viewform" target="_blank" class="btn-primary">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSeAzRhdghZqplhfhZcYypTNL2aP4pqBozRb-XDa2KSsq0PeKA/viewform" target="_blank" rel="noopener noreferrer" class="btn-primary">
         Prendre son siège <span class="arrow">→</span>
       </a>
     </div>
+    <div class="hero-instruments-mockup" aria-hidden="true">
+      <svg viewBox="0 0 560 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ede9fe"/>
+            <stop offset="100%" stop-color="#f8f8fb"/>
+          </linearGradient>
+        </defs>
+        <g font-family="DM Sans, sans-serif">
+          <rect x="8" y="12" width="168" height="96" rx="14" fill="url(#g1)" stroke="rgba(0,0,0,0.07)" stroke-width="1"/>
+          <circle cx="28" cy="36" r="4" fill="#16a34a"/>
+          <text x="40" y="40" font-size="9" font-weight="700" fill="#16a34a" letter-spacing="0.12em">OPÉRATIONNEL</text>
+          <text x="24" y="78" font-size="13" font-weight="700" fill="#0f0d1a">FD-01</text>
+          <rect x="196" y="12" width="168" height="96" rx="14" fill="url(#g1)" stroke="rgba(0,0,0,0.07)" stroke-width="1"/>
+          <circle cx="216" cy="36" r="4" fill="#16a34a"/>
+          <text x="228" y="40" font-size="9" font-weight="700" fill="#16a34a" letter-spacing="0.12em">OPÉRATIONNEL</text>
+          <text x="212" y="78" font-size="13" font-weight="700" fill="#0f0d1a">FD-02</text>
+          <rect x="384" y="12" width="168" height="96" rx="14" fill="url(#g1)" stroke="rgba(0,0,0,0.07)" stroke-width="1"/>
+          <circle cx="404" cy="36" r="4" fill="#16a34a"/>
+          <text x="416" y="40" font-size="9" font-weight="700" fill="#16a34a" letter-spacing="0.12em">OPÉRATIONNEL</text>
+          <text x="400" y="78" font-size="13" font-weight="700" fill="#0f0d1a">FD-03</text>
+        </g>
+      </svg>
+    </div>
   </div>
 
-  <div class="hero-scroll-hint">
+  <div class="hero-scroll-hint" aria-hidden="true">
     <div class="scroll-line"></div>
   </div>
 </section>
 
 <!-- MANIFESTE -->
-<section id="manifeste">
+<section id="manifeste" class="fade-up">
   <div class="manifeste-header">
     <div>
       <div class="section-label">Manifeste</div>
@@ -777,20 +837,29 @@
   </div>
   <div class="phases-grid">
     <div class="phase-card">
-      <div class="phase-accent-line"></div>
-      <div class="phase-num">Phase 01 — Pré-vol</div>
+      <span class="phase-watermark" aria-hidden="true">01</span>
+      <div class="phase-icon" aria-hidden="true">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="6" width="24" height="28" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M12 14h16M12 20h12M12 26h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="phase-num">Phase 01 · Pré-vol</div>
       <div class="phase-title">Préparer</div>
       <p class="phase-body">Objectifs, contraintes, checklists. On ne décolle pas sans prérequis. Chaque workflow est cadré, validé, autorisé avant exécution.</p>
     </div>
     <div class="phase-card">
-      <div class="phase-accent-line"></div>
-      <div class="phase-num">Phase 02 — En vol</div>
+      <span class="phase-watermark" aria-hidden="true">02</span>
+      <div class="phase-icon" aria-hidden="true">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="14" stroke="currentColor" stroke-width="1.5"/><path d="M18 14l8 6-8 6V14z" fill="currentColor"/></svg>
+      </div>
+      <div class="phase-num">Phase 02 · En vol</div>
       <div class="phase-title">Exécuter</div>
-      <p class="phase-body">L'agent exécute. Autonomie supervisée. L'humain reste aux commandes — pas dans les détails, mais en maîtrise. Données en temps réel.</p>
+      <p class="phase-body">L'agent exécute. Autonomie supervisée. L'humain reste aux commandes, pas dans les détails, mais en maîtrise. Données en temps réel.</p>
     </div>
     <div class="phase-card">
-      <div class="phase-accent-line"></div>
-      <div class="phase-num">Phase 03 — Post-vol</div>
+      <span class="phase-watermark" aria-hidden="true">03</span>
+      <div class="phase-icon" aria-hidden="true">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 28l6-8 6 6 8-12 6 6v8H8v-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M8 32h28" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="phase-num">Phase 03 · Post-vol</div>
       <div class="phase-title">Améliorer</div>
       <p class="phase-body">Boîte noire, RETEX, amélioration continue. Chaque exécution est tracée. Chaque décision est auditable. Le système apprend.</p>
     </div>
@@ -798,7 +867,7 @@
 </section>
 
 <!-- INSTRUMENTS -->
-<section id="instruments">
+<section id="instruments" class="fade-up">
   <div class="instruments-intro">
     <div>
       <div class="section-label">Instruments de bord</div>
@@ -809,161 +878,187 @@
   <div class="instruments-grid">
 
     <div class="instr-card">
-      <div class="instr-border"></div>
-      <div class="instr-id">FD-01 / AUTOPILOT</div>
+      <div class="instr-card-head">
+        <span class="instr-id">FD-01</span>
+        <span class="instr-status-pill">Opérationnel</span>
+      </div>
       <div class="instr-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="12" stroke="#00cfef" stroke-width="1.5"/>
-          <circle cx="16" cy="16" r="4" fill="#00cfef" opacity="0.3"/>
-          <circle cx="16" cy="16" r="2" fill="#00cfef"/>
-          <line x1="16" y1="4" x2="16" y2="8" stroke="#00cfef" stroke-width="1.5"/>
-          <line x1="16" y1="24" x2="16" y2="28" stroke="#00cfef" stroke-width="1.5" opacity="0.3"/>
-          <line x1="4" y1="16" x2="8" y2="16" stroke="#00cfef" stroke-width="1.5" opacity="0.3"/>
-          <line x1="24" y1="16" x2="28" y2="16" stroke="#00cfef" stroke-width="1.5" opacity="0.3"/>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="12" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="4" fill="currentColor" opacity="0.22"/>
+          <circle cx="16" cy="16" r="2" fill="currentColor"/>
+          <line x1="16" y1="4" x2="16" y2="8" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="16" y1="24" x2="16" y2="28" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
+          <line x1="4" y1="16" x2="8" y2="16" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
+          <line x1="24" y1="16" x2="28" y2="16" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
         </svg>
       </div>
       <div class="instr-title">Autonomie supervisée</div>
       <p class="instr-body">Les agents opèrent dans une enveloppe d'autorisation définie. Chaque action est bornée, chaque dépassement est bloqué.</p>
-      <div class="instr-status">Opérationnel</div>
     </div>
 
     <div class="instr-card">
-      <div class="instr-border"></div>
-      <div class="instr-id">FD-02 / PFD</div>
+      <div class="instr-card-head">
+        <span class="instr-id">FD-02</span>
+        <span class="instr-status-pill">Opérationnel</span>
+      </div>
       <div class="instr-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <rect x="2" y="8" width="28" height="16" rx="1" stroke="#f5a623" stroke-width="1.5"/>
-          <line x1="2" y1="16" x2="30" y2="16" stroke="#f5a623" stroke-width="1" opacity="0.4"/>
-          <line x1="10" y1="8" x2="10" y2="24" stroke="#f5a623" stroke-width="1" opacity="0.3"/>
-          <line x1="22" y1="8" x2="22" y2="24" stroke="#f5a623" stroke-width="1" opacity="0.3"/>
-          <circle cx="16" cy="16" r="3" stroke="#f5a623" stroke-width="1.5"/>
-          <line x1="16" y1="8" x2="16" y2="13" stroke="#f5a623" stroke-width="2"/>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="8" width="28" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="2" y1="16" x2="30" y2="16" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+          <line x1="10" y1="8" x2="10" y2="24" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+          <line x1="22" y1="8" x2="22" y2="24" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+          <circle cx="16" cy="16" r="3" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="16" y1="8" x2="16" y2="13" stroke="currentColor" stroke-width="2"/>
         </svg>
       </div>
       <div class="instr-title">Vol aux instruments</div>
       <p class="instr-body">Des indicateurs fiables, pas d'intuition. Chaque métrique est sourcée, vérifiée, affichée en temps réel. Décisions basées sur des faits.</p>
-      <div class="instr-status">Opérationnel</div>
     </div>
 
     <div class="instr-card">
-      <div class="instr-border"></div>
-      <div class="instr-id">FD-03 / CVR</div>
+      <div class="instr-card-head">
+        <span class="instr-id">FD-03</span>
+        <span class="instr-status-pill">Opérationnel</span>
+      </div>
       <div class="instr-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <rect x="4" y="4" width="24" height="24" rx="2" stroke="#00d68f" stroke-width="1.5"/>
-          <line x1="8" y1="10" x2="24" y2="10" stroke="#00d68f" stroke-width="1" opacity="0.6"/>
-          <line x1="8" y1="14" x2="20" y2="14" stroke="#00d68f" stroke-width="1" opacity="0.6"/>
-          <line x1="8" y1="18" x2="22" y2="18" stroke="#00d68f" stroke-width="1" opacity="0.6"/>
-          <line x1="8" y1="22" x2="16" y2="22" stroke="#00d68f" stroke-width="1" opacity="0.6"/>
-          <circle cx="24" cy="22" r="4" fill="#00d68f" opacity="0.15" stroke="#00d68f" stroke-width="1.5"/>
-          <circle cx="24" cy="22" r="1.5" fill="#00d68f"/>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="4" width="24" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="8" y1="10" x2="24" y2="10" stroke="currentColor" stroke-width="1" opacity="0.55"/>
+          <line x1="8" y1="14" x2="20" y2="14" stroke="currentColor" stroke-width="1" opacity="0.55"/>
+          <line x1="8" y1="18" x2="22" y2="18" stroke="currentColor" stroke-width="1" opacity="0.55"/>
+          <line x1="8" y1="22" x2="16" y2="22" stroke="currentColor" stroke-width="1" opacity="0.55"/>
+          <circle cx="24" cy="22" r="4" fill="currentColor" opacity="0.12" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="24" cy="22" r="1.5" fill="currentColor"/>
         </svg>
       </div>
       <div class="instr-title">Boîte noire</div>
       <p class="instr-body">Journalisation complète de chaque décision, chaque action, chaque résultat. Audit trail complet. Conformité native, rien à paramétrer.</p>
-      <div class="instr-status">Opérationnel</div>
     </div>
 
     <div class="instr-card">
-      <div class="instr-border"></div>
-      <div class="instr-id">FD-04 / CHICA</div>
+      <div class="instr-card-head">
+        <span class="instr-id">FD-04</span>
+        <span class="instr-status-pill">Opérationnel</span>
+      </div>
       <div class="instr-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <path d="M16 4L28 26H4L16 4Z" stroke="#ff3b50" stroke-width="1.5" fill="none"/>
-          <line x1="16" y1="12" x2="16" y2="18" stroke="#ff3b50" stroke-width="2"/>
-          <circle cx="16" cy="22" r="1.5" fill="#ff3b50"/>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 4L28 26H4L16 4Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <line x1="16" y1="12" x2="16" y2="18" stroke="currentColor" stroke-width="2"/>
+          <circle cx="16" cy="22" r="1.5" fill="currentColor"/>
         </svg>
       </div>
       <div class="instr-title">CHICA automatique</div>
-      <p class="instr-body">Détection d'anomalie en temps réel. Dès qu'une déviation est identifiée, le système corrige, alerte ou stoppe — avant que le problème ne se propage.</p>
-      <div class="instr-status">Opérationnel</div>
+      <p class="instr-body">Détection d'anomalie en temps réel. Dès qu'une déviation est identifiée, le système corrige, alerte ou stoppe, avant que le problème ne se propage.</p>
     </div>
 
     <div class="instr-card">
-      <div class="instr-border"></div>
-      <div class="instr-id">FD-05 / TCAS</div>
+      <div class="instr-card-head">
+        <span class="instr-id">FD-05</span>
+        <span class="instr-status-pill">Opérationnel</span>
+      </div>
       <div class="instr-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="12" stroke="#00cfef" stroke-width="1.5" opacity="0.3"/>
-          <circle cx="16" cy="16" r="8" stroke="#00cfef" stroke-width="1.5" opacity="0.5"/>
-          <circle cx="16" cy="16" r="4" stroke="#00cfef" stroke-width="1.5"/>
-          <circle cx="16" cy="16" r="1.5" fill="#00cfef"/>
-          <line x1="16" y1="4" x2="16" y2="10" stroke="#00cfef" stroke-width="1.5" stroke-dasharray="2 2"/>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="12" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
+          <circle cx="16" cy="16" r="8" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="16" cy="16" r="4" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="1.5" fill="currentColor"/>
+          <line x1="16" y1="4" x2="16" y2="10" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 3"/>
         </svg>
       </div>
       <div class="instr-title">Anticipation</div>
       <p class="instr-body">Alertes proactives avant les problèmes. Le système modélise les risques en amont et notifie les équipes avec suffisamment d'avance pour agir.</p>
-      <div class="instr-status">Opérationnel</div>
     </div>
 
     <div class="instr-card">
-      <div class="instr-border"></div>
-      <div class="instr-id">FD-06 / RGPD</div>
+      <div class="instr-card-head">
+        <span class="instr-id">FD-06</span>
+        <span class="instr-status-pill">Opérationnel</span>
+      </div>
       <div class="instr-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <rect x="6" y="14" width="20" height="14" rx="1" stroke="#00d68f" stroke-width="1.5"/>
-          <path d="M10 14V10a6 6 0 0 1 12 0v4" stroke="#00d68f" stroke-width="1.5" fill="none"/>
-          <circle cx="16" cy="21" r="2.5" stroke="#00d68f" stroke-width="1.5"/>
-          <line x1="16" y1="23.5" x2="16" y2="26" stroke="#00d68f" stroke-width="1.5"/>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="14" width="20" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M10 14V10a6 6 0 0 1 12 0v4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="21" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="16" y1="23.5" x2="16" y2="26" stroke="currentColor" stroke-width="1.5"/>
         </svg>
       </div>
       <div class="instr-title">Conformité native</div>
-      <p class="instr-body">RGPD intégré dès l'architecture, pas en option. Souveraineté des données, isolation des traitements, droit à l'oubli — par design.</p>
-      <div class="instr-status">Opérationnel</div>
+      <p class="instr-body">RGPD intégré dès l'architecture, pas en option. Souveraineté des données, isolation des traitements, droit à l'oubli, par design.</p>
     </div>
 
   </div>
 </section>
 
 <!-- ÉQUIPAGE -->
-<section id="equipage">
-  <div class="section-label">Équipage</div>
-  <h2 class="section-title">Aux commandes</h2>
+<section id="equipage" class="fade-up">
+  <div class="equipage-intro">
+    <div class="section-label">Équipage</div>
+    <h2 class="section-title">Aux commandes</h2>
+  </div>
   <div class="team-grid">
     <div class="team-card">
-      <div class="team-role">Pilote — Architecture & Engineering</div>
-      <div class="team-name">Paul Laisne</div>
+      <div class="team-card-top">
+        <div class="team-avatar" aria-hidden="true">PL</div>
+        <div class="team-meta">
+          <span class="team-role-pill">Pilote</span>
+          <div class="team-name">Paul Laisne</div>
+          <div class="team-role-detail">Architecture &amp; Engineering</div>
+        </div>
+      </div>
       <p class="team-desc">Architecte des systèmes d'exécution IA. En charge de la rigueur technique qui fait tenir l'enveloppe de vol.</p>
-      <a href="https://www.linkedin.com/in/paul-laisné/" target="_blank" class="team-linkedin">
-        LinkedIn →
+      <a href="https://www.linkedin.com/in/paul-laisné/" target="_blank" rel="noopener noreferrer" class="team-linkedin">
+        LinkedIn
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       </a>
     </div>
     <div class="team-card">
-      <div class="team-role">Copilote — Go-to-Market & Produit</div>
-      <div class="team-name">Yannick Bardie</div>
+      <div class="team-card-top">
+        <div class="team-avatar" aria-hidden="true">YB</div>
+        <div class="team-meta">
+          <span class="team-role-pill">Copilote</span>
+          <div class="team-name">Yannick Bardie</div>
+          <div class="team-role-detail">Go-to-Market &amp; Produit</div>
+        </div>
+      </div>
       <p class="team-desc">Stratégie produit et mise sur le marché. En charge des opérations commerciales et du cap à tenir.</p>
-      <a href="https://www.linkedin.com/in/yannickbardie/" target="_blank" class="team-linkedin">
-        LinkedIn →
+      <a href="https://www.linkedin.com/in/yannickbardie/" target="_blank" rel="noopener noreferrer" class="team-linkedin">
+        LinkedIn
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       </a>
     </div>
   </div>
 </section>
 
 <!-- CTA FINAL -->
-<section id="cta-final">
-  <div class="cta-content">
-    <div class="cta-tag">Accès beta — Places limitées</div>
+<div class="cta-wrap fade-up">
+  <section id="cta-final">
+    <div class="cta-tag">Accès beta · Places limitées</div>
     <h2 class="section-title">Prêt à embarquer ?</h2>
     <p class="section-body">Beta ouverte aux entreprises sélectionnées. Accès direct à l'équipe fondatrice.</p>
     <div class="cta-final-row">
-      <a href="https://docs.google.com/forms/d/e/1FAIpQLSeAzRhdghZqplhfhZcYypTNL2aP4pqBozRb-XDa2KSsq0PeKA/viewform" target="_blank" class="btn-primary" style="font-size:15px; padding:20px 40px;">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSeAzRhdghZqplhfhZcYypTNL2aP4pqBozRb-XDa2KSsq0PeKA/viewform" target="_blank" rel="noopener noreferrer" class="btn-primary btn-light" style="font-size:16px;padding:18px 36px;">
         Prendre son siège <span class="arrow">→</span>
       </a>
       <div class="limited-seats">Accès sur candidature</div>
     </div>
-  </div>
-</section>
+  </section>
+</div>
 
 <!-- FOOTER -->
-<footer>
-  <span class="footer-logo">FlightDesk</span>
-  <span class="footer-copy">© 2026 — Cockpit numérique pour agents IA</span>
+<footer class="site-footer">
+  <a class="footer-brand" href="#hero">
+    <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="#9591b0"/></svg>
+    FlightDesk
+  </a>
+  <span class="footer-copy">© 2026 · Cockpit numérique pour agents IA</span>
 </footer>
+
 
 
 <script>
 /* ═══════════════════════════════════════════════════════════
-   CINEMATIC ANIMATION — Dusk Exterior → Glass Cockpit
+   CINEMATIC ANIMATION: Dusk Exterior to Glass Cockpit
    10s loop: atmosphere / zoom / G3000 instruments / fade
 ═══════════════════════════════════════════════════════════ */
 (function () {
@@ -1014,7 +1109,7 @@
 
   // ─── EXTERIOR SCENE ───────────────────────────────────────
   function drawAtmosphere(progress) {
-    // Sky: deep twilight — violet top → indigo → amber/teal horizon
+    // Sky: deep twilight - violet top → indigo → amber/teal horizon
     const g = ctx.createLinearGradient(0,0,0,H);
     g.addColorStop(0,    '#03020a');
     g.addColorStop(0.18, '#080618');
@@ -1026,7 +1121,7 @@
     g.addColorStop(1,    '#04080f');
     ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
 
-    // Horizon atmospheric band — warm amber glow at horizon
+    // Horizon atmospheric band - warm amber glow at horizon
     const hY = H * 0.80;
     const hg = ctx.createLinearGradient(0, hY-H*0.18, 0, hY+H*0.10);
     hg.addColorStop(0,   'rgba(0,0,0,0)');
@@ -1099,7 +1194,7 @@
     });
   }
 
-  // Aircraft silhouette — seen from 3/4 front-low angle, flying away/toward
+  // Aircraft silhouette - seen from 3/4 front-low angle, flying away/toward
   // TBM940 style: low-wing, T-tail, prop, streamlined fuselage
   function drawAircraftSilhouette(cx, cy, sc, bank, fogA) {
     ctx.save();
@@ -1114,7 +1209,7 @@
     ctx.fillStyle=haze;
     ctx.beginPath(); ctx.arc(0,0,300,0,Math.PI*2); ctx.fill();
 
-    // Engine exhaust trail — hot amber
+    // Engine exhaust trail - hot amber
     const ex=ctx.createRadialGradient(170,8,0,220,8,70);
     ex.addColorStop(0,'rgba(255,200,80,0.65)');
     ex.addColorStop(0.2,'rgba(255,140,30,0.35)');
@@ -1134,7 +1229,7 @@
       ctx.fill();
     }
 
-    // ── Main fuselage — dark metallic silhouette
+    // ── Main fuselage - dark metallic silhouette
     // Use a very dark gradient with subtle metallic sheen
     const fgMain = ctx.createLinearGradient(-190,-10,-190,30);
     fgMain.addColorStop(0, '#1a2838');
@@ -1165,7 +1260,7 @@
     ctx.moveTo(-168,-14); ctx.bezierCurveTo(-80,-40,60,-28,180,-12);
     ctx.stroke();
 
-    // ── Cockpit windows — large panoramic, lit from inside
+    // ── Cockpit windows - large panoramic, lit from inside
     const wg=ctx.createLinearGradient(-172,-4,-68,-2);
     wg.addColorStop(0,'rgba(0,180,240,0.5)');
     wg.addColorStop(0.35,'rgba(60,160,230,0.38)');
@@ -1256,7 +1351,7 @@
     ctx.restore();
   }
 
-  // ─── ZOOM TRANSITION — Windshield vignette approaching ─────
+  // ─── ZOOM TRANSITION - Windshield vignette approaching ─────
   function drawZoomTransition(prog) {
     const ep = ease(prog);
 
@@ -1301,7 +1396,7 @@
     const cw=W, ch=H;
 
     // ── Window view (behind instruments) ──
-    // Sky through windshield — dramatic night horizon
+    // Sky through windshield - dramatic night horizon
     const skyg=ctx.createLinearGradient(0,0,0,ch*0.70);
     skyg.addColorStop(0,`rgba(2,3,10,${a})`);
     skyg.addColorStop(0.35,`rgba(5,8,22,${a})`);
@@ -1380,7 +1475,7 @@
     const scrW = (cw - gap*4) / 3;
     const screens2 = [
       { x: gap,            w: scrW, label:'PFD', acol:'0,207,239',  type:'pfd' },
-      { x: gap*2+scrW,     w: scrW, label:'MFD — FlightDesk AI', acol:'0,214,143', type:'mfd' },
+      { x: gap*2+scrW,     w: scrW, label:'MFD · FlightDesk AI', acol:'0,214,143', type:'mfd' },
       { x: gap*3+scrW*2,   w: scrW, label:'EIS', acol:'245,166,35', type:'eis' },
     ];
 
@@ -1548,7 +1643,7 @@
         ctx.fillText('AP  ·  LNAV  ·  VNAV PTH',pX+pW/2,scrY+pH*0.95);
       }
 
-      // ── MFD — AI feed ──
+      // ── MFD - AI feed ──
       if(sc.type==='mfd'){
         const mX=sc.x, mY=scrY, mW=sc.w, mH=scrH;
         const scroll=(ck_t*0.5)%agentFeed.length;
@@ -1691,7 +1786,7 @@
       drawCockpit(1);
     }
     else {
-      // Phase 4: Fade back to exterior — smooth crossfade
+      // Phase 4: Fade back to exterior - smooth crossfade
       const prog = (elapsed - T.ext - T.zoom - T.cockpit) / T.fade;
       const ep   = ease(prog);
       ck_t += 0.016;
@@ -1708,7 +1803,7 @@
       const jy   = H*0.41 + Math.sin(t*0.24)*H*0.015;
       drawAircraftSilhouette(jx, jy, sc, bank, 0);
 
-      // Cockpit fades out — start fading immediately, done at 75%
+      // Cockpit fades out - start fading immediately, done at 75%
       const cockpitA = clamp(1 - ep / 0.75, 0, 1);
       if (cockpitA > 0) drawCockpit(cockpitA);
     }
@@ -1718,85 +1813,65 @@
   animate();
 })();
 
-/* ───────────────────────────────
-   SCROLL REVEAL
-─────────────────────────────── */
-const reveals = document.querySelectorAll('.phase-card, .instr-card, .team-card');
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      observer.unobserve(e.target);
+/* Scroll reveal: sections */
+const revealSections = document.querySelectorAll('.fade-up');
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('is-inview');
+      sectionObserver.unobserve(entry.target);
     }
   });
-}, { threshold: 0.15 });
-reveals.forEach(el => observer.observe(el));
+}, { threshold: 0.1 });
+revealSections.forEach((el) => sectionObserver.observe(el));
 
-/* ───────────────────────────────
-   TWEAKS
-─────────────────────────────── */
+/* Tweaks (éditeur intégré) */
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "accentColor": "#00cfef",
-  "amberColor": "#f5a623",
-  "heroTitle": "On ne vend pas de l'IA qui répond.",
-  "showQR": false
+  "accentColor": "#7c3aed",
+  "heroTitle": "On ne vend pas<br>de l'IA qui répond."
 }/*EDITMODE-END*/;
 
 let tweakValues = { ...TWEAK_DEFAULTS };
 
 function applyTweaks(v) {
-  document.documentElement.style.setProperty('--cyan', v.accentColor);
-  document.documentElement.style.setProperty('--amber', v.amberColor);
-  document.querySelector('h1').innerHTML = v.heroTitle;
-  document.querySelector('.qr-badge').style.display = v.showQR ? '' : 'none';
+  document.documentElement.style.setProperty('--accent', v.accentColor);
+  document.documentElement.style.setProperty('--text-accent', v.accentColor);
+  const el = document.querySelector('#hero h1');
+  if (el) el.innerHTML = v.heroTitle;
 }
 
 applyTweaks(tweakValues);
 
-// Tweaks panel
 const tweakPanel = document.createElement('div');
 tweakPanel.id = 'tweaks-panel';
 tweakPanel.style.cssText = `
   display:none; position:fixed; bottom:24px; right:24px; z-index:9999;
-  background:#070d17; border:1px solid rgba(0,207,239,0.25);
-  padding:24px; width:280px; font-family:'IBM Plex Mono',monospace;
+  background:#fff; border:1px solid rgba(0,0,0,0.08); box-shadow:0 8px 30px rgba(0,0,0,0.1);
+  padding:24px; width:280px; font-family:'DM Sans',sans-serif; border-radius:12px;
 `;
 tweakPanel.innerHTML = `
-  <div style="font-size:11px;letter-spacing:0.2em;color:#00cfef;text-transform:uppercase;margin-bottom:20px;">Tweaks</div>
-  <label style="display:block;font-size:10px;color:rgba(238,242,247,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Couleur accent (cyan)</label>
-  <input type="color" value="${tweakValues.accentColor}" id="tw-accent" style="width:100%;height:32px;border:none;background:none;cursor:pointer;margin-bottom:16px;">
-  <label style="display:block;font-size:10px;color:rgba(238,242,247,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Couleur accent (ambre)</label>
-  <input type="color" value="${tweakValues.amberColor}" id="tw-amber" style="width:100%;height:32px;border:none;background:none;cursor:pointer;margin-bottom:16px;">
-  <label style="display:block;font-size:10px;color:rgba(238,242,247,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Titre hero</label>
-  <input type="text" id="tw-title" value="${tweakValues.heroTitle}" style="width:100%;background:rgba(238,242,247,0.05);border:1px solid rgba(238,242,247,0.1);color:#eef2f7;padding:8px;font-family:inherit;font-size:11px;margin-bottom:16px;">
-  <label style="display:flex;align-items:center;gap:8px;font-size:10px;color:rgba(238,242,247,0.5);letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;">
-    <input type="checkbox" id="tw-qr" ${tweakValues.showQR ? 'checked' : ''}> Afficher QR code
-  </label>
+  <div style="font-size:11px;letter-spacing:0.12em;color:#7c3aed;text-transform:uppercase;margin-bottom:16px;font-weight:600;">Tweaks</div>
+  <label style="display:block;font-size:11px;color:#9591b0;margin-bottom:6px;">Couleur accent</label>
+  <input type="color" id="tw-accent" style="width:100%;height:36px;border:none;background:none;cursor:pointer;margin-bottom:16px;">
+  <label style="display:block;font-size:11px;color:#9591b0;margin-bottom:6px;">Titre hero (HTML)</label>
+  <input type="text" id="tw-title" style="width:100%;background:#f8f8fb;border:1px solid rgba(0,0,0,0.07);color:#0f0d1a;padding:8px;font-family:inherit;font-size:12px;border-radius:6px;">
 `;
 document.body.appendChild(tweakPanel);
+tweakPanel.querySelector('#tw-accent').value = tweakValues.accentColor;
+tweakPanel.querySelector('#tw-title').value = tweakValues.heroTitle;
 
-tweakPanel.querySelector('#tw-accent').addEventListener('input', e => {
+tweakPanel.querySelector('#tw-accent').addEventListener('input', (e) => {
   tweakValues.accentColor = e.target.value;
   applyTweaks(tweakValues);
   window.parent.postMessage({ type: '__edit_mode_set_keys', edits: tweakValues }, '*');
 });
-tweakPanel.querySelector('#tw-amber').addEventListener('input', e => {
-  tweakValues.amberColor = e.target.value;
-  applyTweaks(tweakValues);
-  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: tweakValues }, '*');
-});
-tweakPanel.querySelector('#tw-title').addEventListener('input', e => {
+tweakPanel.querySelector('#tw-title').addEventListener('input', (e) => {
   tweakValues.heroTitle = e.target.value;
   applyTweaks(tweakValues);
   window.parent.postMessage({ type: '__edit_mode_set_keys', edits: tweakValues }, '*');
 });
-tweakPanel.querySelector('#tw-qr').addEventListener('change', e => {
-  tweakValues.showQR = e.target.checked;
-  applyTweaks(tweakValues);
-  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: tweakValues }, '*');
-});
 
-window.addEventListener('message', e => {
+window.addEventListener('message', (e) => {
   if (e.data?.type === '__activate_edit_mode') tweakPanel.style.display = 'block';
   if (e.data?.type === '__deactivate_edit_mode') tweakPanel.style.display = 'none';
 });
