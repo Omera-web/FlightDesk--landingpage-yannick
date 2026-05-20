@@ -1,1144 +1,254 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FlightDesk Beta</title>
-<template id="__bundler_thumbnail" data-bg-color="#04080f">
-  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
-    <!-- Sky -->
-    <defs>
-      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#03020a"/>
-        <stop offset="60%" stop-color="#0a1535"/>
-        <stop offset="85%" stop-color="#102a1a"/>
-        <stop offset="100%" stop-color="#04080f"/>
-      </linearGradient>
-    </defs>
-    <rect width="1200" height="800" fill="url(#sky)"/>
-    <!-- Stars -->
-    <circle cx="200" cy="80" r="2" fill="rgba(220,228,255,0.8)"/>
-    <circle cx="450" cy="50" r="1.5" fill="rgba(220,228,255,0.6)"/>
-    <circle cx="700" cy="90" r="2" fill="rgba(220,228,255,0.7)"/>
-    <circle cx="900" cy="60" r="1.5" fill="rgba(220,228,255,0.5)"/>
-    <circle cx="1050" cy="100" r="2" fill="rgba(220,228,255,0.8)"/>
-    <circle cx="150" cy="160" r="1.5" fill="rgba(220,228,255,0.5)"/>
-    <circle cx="350" cy="140" r="1" fill="rgba(220,228,255,0.6)"/>
-    <circle cx="600" cy="120" r="1.5" fill="rgba(220,228,255,0.7)"/>
-    <circle cx="850" cy="150" r="1" fill="rgba(220,228,255,0.5)"/>
-    <circle cx="1100" cy="130" r="2" fill="rgba(220,228,255,0.6)"/>
-    <!-- Aircraft silhouette -->
-    <g transform="translate(600,340) scale(1.8)">
-      <ellipse cx="0" cy="0" rx="170" ry="18" fill="#111e30"/>
-      <ellipse cx="-70" cy="-14" rx="55" ry="16" fill="#0a3060" opacity="0.7"/>
-      <polygon points="-30,-36 120,-14 120,-8 -16,8 -70,38 -80,38 -60,-8" fill="#162736"/>
-      <polygon points="140,-28 152,-88 170,-84 175,-24" fill="#1a2c44"/>
-      <polygon points="118,-84 132,-94 205,-86 206,-80 162,-77 125,-79" fill="#1a2c44"/>
-      <ellipse cx="-120" cy="-16" rx="40" ry="18" fill="rgba(0,207,239,0.4)"/>
-    </g>
-    <!-- Logo text -->
-    <text x="80" y="740" font-family="monospace" font-size="28" fill="#00cfef" letter-spacing="6" opacity="0.9">FLIGHTDESK</text>
-    <text x="82" y="770" font-family="monospace" font-size="14" fill="rgba(238,242,247,0.4)" letter-spacing="3">BETA PROGRAMME</text>
-    <!-- Cyan accent line -->
-    <rect x="0" y="755" width="1200" height="1" fill="rgba(0,207,239,0.12)"/>
-  </svg>
-</template>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg-base:     #ffffff;
-    --bg-surface:  #f8f8fb;
-    --bg-elevated: #f2f1f8;
-    --bg-subtle:   #e8e6f4;
-
-    --accent:       #7c3aed;
-    --accent-dim:   #a855f7;
-    --accent-light: #ede9fe;
-    --accent-glow:  rgba(124,58,237,0.12);
-
-    --text-primary:   #0f0d1a;
-    --text-secondary: #4b4869;
-    --text-muted:     #9591b0;
-    --text-accent:    #7c3aed;
-
-    --border:        rgba(0,0,0,0.07);
-    --border-accent: rgba(124,58,237,0.2);
-
-    --shadow-sm:  0 1px 3px rgba(0,0,0,0.07);
-    --shadow-md:  0 4px 20px rgba(0,0,0,0.08);
-    --shadow-glow: 0 0 40px rgba(124,58,237,0.12);
-
-    --green: #16a34a;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg-base);
-    color: var(--text-primary);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 400;
-    overflow-x: hidden;
-  }
-
-  a { color: inherit; }
-
-  /* NAV — flotte sur le hero plein écran */
-  .site-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 200;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 16px clamp(20px, 4vw, 40px);
-    background: rgba(8, 10, 18, 0.28);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-  .nav-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-  }
-  .nav-brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-    color: #fff;
-  }
-  .nav-plane {
-    flex-shrink: 0;
-    color: rgba(255, 255, 255, 0.92);
-  }
-  .nav-title {
-    font-weight: 700;
-    font-size: 18px;
-    letter-spacing: -0.02em;
-    color: #fff;
-  }
-  .nav-beta-pill {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.88);
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    padding: 4px 10px;
-    border-radius: 99px;
-  }
-  .nav-cta {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--accent);
-    color: #fff;
-    font-weight: 600;
-    font-size: 14px;
-    padding: 10px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: opacity 0.15s ease, transform 0.15s ease;
-  }
-  .nav-cta:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-  }
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  /* HERO — plein écran, animation fond, texte glass */
-  #hero {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    min-height: 100vh;
-    overflow: hidden;
-    background: #05070d;
-    isolation: isolate;
-  }
-  .hero-media {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    overflow: hidden;
-    pointer-events: none;
-  }
-  .hero-media iframe {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100vw;
-    height: 100vh;
-    min-width: 177.78vh;
-    min-height: 56.25vw;
-    transform: translate(-50%, -50%);
-    border: 0;
-    pointer-events: none;
-    cursor: default;
-  }
-  .hero-media-shield {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    cursor: default;
-    background: transparent;
-  }
-  .hero-bottom-fade {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 38%;
-    z-index: 2;
-    pointer-events: none;
-    background: linear-gradient(
-      to bottom,
-      transparent 0%,
-      rgba(255, 255, 255, 0.06) 35%,
-      rgba(255, 255, 255, 0.55) 72%,
-      var(--bg-base) 100%
-    );
-  }
-  .hero-inner {
-    position: relative;
-    z-index: 4;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    max-width: 1320px;
-    min-height: 100vh;
-    margin: 0 auto;
-    padding: 96px clamp(24px, 5vw, 72px) 128px;
-  }
-  .hero-copy {
-    max-width: 620px;
-    padding: clamp(28px, 4vw, 44px);
-    border-radius: 20px;
-    background: rgba(6, 8, 16, 0.55);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
-  }
-  #hero h1 {
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 800;
-    font-size: clamp(2.25rem, 5.5vw, 4.25rem);
-    line-height: 1.05;
-    letter-spacing: -0.035em;
-    color: #fff;
-    margin-bottom: 20px;
-    opacity: 0;
-    transform: translateY(18px);
-    animation: hero-rise 0.75s 0.2s forwards;
-  }
-  .hero-beta-badge {
-    display: inline-flex;
-    align-items: center;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.88);
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    padding: 8px 14px;
-    border-radius: 99px;
-    margin-bottom: 22px;
-    opacity: 0;
-    transform: translateY(18px);
-    animation: hero-rise 0.7s 0.05s forwards;
-  }
-  .hero-sub {
-    font-size: clamp(1rem, 2vw, 1.125rem);
-    font-weight: 400;
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 32px;
-    max-width: 520px;
-    opacity: 0;
-    transform: translateY(18px);
-    animation: hero-rise 0.7s 0.35s forwards;
-  }
-  .hero-cta-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 16px;
-    opacity: 0;
-    transform: translateY(18px);
-    animation: hero-rise 0.7s 0.5s forwards;
-  }
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: #fff;
-    background: var(--accent);
-    padding: 14px 28px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: opacity 0.15s ease, transform 0.15s ease, box-shadow 0.2s ease;
-  }
-  .btn-primary:hover {
-    opacity: 0.92;
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-glow);
-  }
-  .btn-primary .arrow { font-size: 18px; line-height: 1; }
-  .btn-light {
-    background: #fff;
-    color: var(--accent);
-  }
-  .btn-light:hover {
-    opacity: 0.95;
-    box-shadow: var(--shadow-md);
-  }
-  .hero-scroll-hint {
-    position: absolute;
-    bottom: 36px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 5;
-    opacity: 0;
-    animation: hero-rise 0.6s 1s forwards;
-    pointer-events: none;
-  }
-  .scroll-line {
-    width: 1px;
-    height: 48px;
-    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.45));
-    animation: scroll-anim 1.8s 1.2s ease-in-out infinite;
-  }
-  @keyframes scroll-anim {
-    0% { transform: scaleY(0); transform-origin: top; opacity: 1; }
-    50% { transform: scaleY(1); transform-origin: top; opacity: 1; }
-    100% { transform: scaleY(1); transform-origin: bottom; opacity: 0; }
-  }
-  @keyframes hero-rise {
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* SECTIONS */
-  section {
-    padding: 80px 24px;
-  }
-  .section-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-accent);
-    margin-bottom: 12px;
-  }
-  .section-title {
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 700;
-    font-size: clamp(32px, 5vw, 48px);
-    line-height: 1.12;
-    letter-spacing: -0.02em;
-    color: var(--text-primary);
-    margin-bottom: 16px;
-  }
-  .section-body {
-    font-size: 17px;
-    font-weight: 400;
-    color: var(--text-secondary);
-    line-height: 1.65;
-    max-width: 520px;
-  }
-
-  /* fade-up sections (IntersectionObserver adds .is-inview) */
-  .fade-up:not(.is-inview) .manifeste-header,
-  .fade-up:not(.is-inview) .instruments-intro,
-  .fade-up:not(.is-inview) .equipage-intro {
-    opacity: 0;
-    transform: translateY(22px);
-  }
-  .fade-up:not(.is-inview) #cta-final .cta-tag,
-  .fade-up:not(.is-inview) #cta-final .section-title,
-  .fade-up:not(.is-inview) #cta-final .section-body,
-  .fade-up:not(.is-inview) #cta-final .cta-final-row {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  .fade-up:not(.is-inview) .phase-card,
-  .fade-up:not(.is-inview) .instr-card,
-  .fade-up:not(.is-inview) .team-card {
-    opacity: 0;
-    transform: translateY(26px);
-  }
-  .manifeste-header,
-  .instruments-intro,
-  .equipage-intro,
-  #cta-final .cta-tag,
-  #cta-final .section-title,
-  #cta-final .section-body,
-  #cta-final .cta-final-row {
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .fade-up.is-inview .manifeste-header,
-  .fade-up.is-inview .instruments-intro,
-  .fade-up.is-inview .equipage-intro,
-  .fade-up.is-inview #cta-final .cta-tag,
-  .fade-up.is-inview #cta-final .section-title,
-  .fade-up.is-inview #cta-final .section-body,
-  .fade-up.is-inview #cta-final .cta-final-row,
-  .fade-up.is-inview .phase-card,
-  .fade-up.is-inview .instr-card,
-  .fade-up.is-inview .team-card {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .fade-up.is-inview .manifeste-header { transition-delay: 0.04s; }
-  .fade-up.is-inview .instruments-intro { transition-delay: 0.04s; }
-  .fade-up.is-inview .equipage-intro { transition-delay: 0.04s; }
-  .fade-up.is-inview #cta-final .cta-tag { transition-delay: 0.05s; }
-  .fade-up.is-inview #cta-final .section-title { transition-delay: 0.1s; }
-  .fade-up.is-inview #cta-final .section-body { transition-delay: 0.14s; }
-  .fade-up.is-inview #cta-final .cta-final-row { transition-delay: 0.18s; }
-  .fade-up.is-inview .phase-card:nth-child(1) { transition-delay: 0.08s; }
-  .fade-up.is-inview .phase-card:nth-child(2) { transition-delay: 0.14s; }
-  .fade-up.is-inview .phase-card:nth-child(3) { transition-delay: 0.2s; }
-  .fade-up.is-inview .instr-card:nth-child(1) { transition-delay: 0.06s; }
-  .fade-up.is-inview .instr-card:nth-child(2) { transition-delay: 0.1s; }
-  .fade-up.is-inview .instr-card:nth-child(3) { transition-delay: 0.14s; }
-  .fade-up.is-inview .instr-card:nth-child(4) { transition-delay: 0.18s; }
-  .fade-up.is-inview .instr-card:nth-child(5) { transition-delay: 0.22s; }
-  .fade-up.is-inview .instr-card:nth-child(6) { transition-delay: 0.26s; }
-  .fade-up.is-inview .team-card:nth-child(1) { transition-delay: 0.1s; }
-  .fade-up.is-inview .team-card:nth-child(2) { transition-delay: 0.16s; }
-
-  /* MANIFESTE / phases */
-  #manifeste {
-    background: var(--bg-surface);
-  }
-  .manifeste-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 32px;
-    margin-bottom: 48px;
-    flex-wrap: wrap;
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .phases-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  .phase-card {
-    position: relative;
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 32px;
-    box-shadow: var(--shadow-sm);
-    overflow: hidden;
-    transition: opacity 0.55s ease, transform 0.55s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  }
-  .phase-card:hover {
-    border-color: var(--border-accent);
-    box-shadow: var(--shadow-glow);
-    transform: translateY(-2px);
-  }
-  .phase-watermark {
-    position: absolute;
-    bottom: 8px;
-    right: 12px;
-    font-size: 72px;
-    font-weight: 800;
-    line-height: 1;
-    color: var(--accent-light);
-    pointer-events: none;
-    user-select: none;
-  }
-  .phase-icon {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 16px;
-    color: var(--accent);
-  }
-  .phase-num {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-  }
-  .phase-title {
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin-bottom: 12px;
-    color: var(--text-primary);
-  }
-  .phase-body {
-    font-size: 15px;
-    color: var(--text-secondary);
-    line-height: 1.65;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* INSTRUMENTS */
-  #instruments {
-    background: var(--bg-base);
-  }
-  .instruments-intro {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 24px;
-    margin-bottom: 40px;
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .instruments-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  .instr-card {
-    background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    transition: opacity 0.55s ease, transform 0.55s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    position: relative;
-  }
-  .instr-card:hover {
-    border-color: var(--border-accent);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
-  }
-  .instr-card-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-  .instr-id {
-    font-family: ui-monospace, 'Cousine', monospace;
-    font-size: 11px;
-    letter-spacing: 0.04em;
-    color: var(--text-muted);
-  }
-  .instr-status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--green);
-  }
-  .instr-status-pill::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--green);
-  }
-  .instr-icon {
-    width: 36px;
-    height: 36px;
-    margin-bottom: 12px;
-    color: var(--accent);
-  }
-  .instr-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: var(--text-primary);
-  }
-  .instr-body {
-    font-size: 14px;
-    color: var(--text-secondary);
-    line-height: 1.6;
-  }
-
-  /* TEAM */
-  #equipage {
-    background: var(--bg-surface);
-  }
-  .equipage-intro {
-    margin-bottom: 40px;
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .team-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-    max-width: 880px;
-  }
-  .team-card {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 28px;
-    box-shadow: var(--shadow-sm);
-    transition: opacity 0.55s ease, transform 0.55s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  }
-  .team-card:hover {
-    border-color: var(--border-accent);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-  }
-  .team-card-top {
-    display: flex;
-    align-items: flex-start;
-    gap: 18px;
-    margin-bottom: 16px;
-  }
-  .team-avatar {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 18px;
-    color: #fff;
-    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-    flex-shrink: 0;
-  }
-  .team-meta { flex: 1; min-width: 0; }
-  .team-role-pill {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--accent);
-    background: var(--accent-light);
-    padding: 5px 12px;
-    border-radius: 99px;
-    margin-bottom: 10px;
-  }
-  .team-name {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin-bottom: 6px;
-    color: var(--text-primary);
-  }
-  .team-role-detail {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 10px;
-  }
-  .team-desc {
-    font-size: 14px;
-    color: var(--text-muted);
-    line-height: 1.55;
-    margin-bottom: 14px;
-  }
-  .team-linkedin {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--accent);
-    text-decoration: none;
-    transition: opacity 0.15s ease;
-  }
-  .team-linkedin:hover {
-    text-decoration: underline;
-    opacity: 0.9;
-  }
-  .team-linkedin svg { flex-shrink: 0; opacity: 0.85; }
-
-  /* CTA FINAL */
-  .cta-wrap {
-    padding: 0 24px 80px;
-    background: var(--bg-base);
-  }
-  #cta-final {
-    text-align: center;
-    padding: 80px 28px;
-    max-width: 960px;
-    margin: 0 auto;
-    border-radius: 24px 24px 0 0;
-    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-    color: #fff;
-    position: relative;
-    overflow: hidden;
-  }
-  #cta-final .section-label {
-    color: rgba(255,255,255,0.85);
-  }
-  #cta-final .section-title {
-    color: #fff;
-    margin-bottom: 12px;
-  }
-  #cta-final .section-body {
-    color: rgba(255,255,255,0.92);
-    margin: 0 auto 36px;
-    max-width: 440px;
-  }
-  .cta-tag {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.85);
-    margin-bottom: 16px;
-  }
-  .cta-final-row {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-  }
-  .limited-seats {
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.8);
-    border: 1px solid rgba(255,255,255,0.35);
-    padding: 8px 18px;
-    border-radius: 99px;
-  }
-
-  /* FOOTER */
-  .site-footer {
-    padding: 28px 24px;
-    border-top: 1px solid var(--border);
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  .footer-brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--text-muted);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 15px;
-  }
-  .footer-copy {
-    font-size: 13px;
-    color: var(--text-muted);
-  }
-
-  @media (min-width: 768px) {
-    section { padding: 100px 48px; }
-    .manifeste-header { margin-bottom: 64px; }
-    .phases-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
-    .instruments-intro { grid-template-columns: 1fr 1fr; align-items: end; margin-bottom: 56px; }
-    .instruments-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .team-grid { grid-template-columns: repeat(2, 1fr); }
-    .cta-wrap { padding: 0 48px 80px; }
-    .site-footer { padding: 28px 48px; }
-  }
-
-  @media (max-width: 767px) {
-    .hero-inner {
-      align-items: flex-end;
-      justify-content: center;
-      padding: 88px 20px 100px;
-    }
-    .hero-copy {
-      width: 100%;
-      max-width: 100%;
-      text-align: center;
-      padding: 28px 22px;
-    }
-    .hero-sub {
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .hero-cta-row {
-      justify-content: center;
-    }
-    #hero h1 {
-      font-size: clamp(1.85rem, 8.5vw, 2.5rem);
-    }
-    .hero-bottom-fade {
-      height: 42%;
-    }
-  }
-
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlightDesk | Le cockpit IA de votre entreprise</title>
+  <meta name="description" content="FlightDesk pilote vos opérations avec des agents IA configurables, supervisables et évolutifs. Solution française, données en Europe.">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="page-home">
 
-<!-- NAV -->
-<nav class="site-nav" aria-label="Principale">
-  <div class="nav-left">
-    <a class="nav-brand" href="#hero">
-      <svg class="nav-plane" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="currentColor"/></svg>
-      <span class="nav-title">FlightDesk</span>
-      <span class="nav-beta-pill">Beta</span>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="currentColor"/></svg>
+      FlightDesk
     </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <nav id="site-nav" class="site-nav" aria-label="Principale">
+      <ul class="nav-list">
+        <li><a href="index.html" class="is-active">Accueil</a></li>
+        <li><a href="services.html">Nos services</a></li>
+        <li><a href="securite.html">Vos données</a></li>
+        <li><a href="equipe.html">L'équipage</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <a href="https://flightdesk.fr" class="btn btn-primary btn-sm header-cta-mobile" target="_blank" rel="noopener noreferrer">Se connecter</a>
+    </nav>
+    <a href="https://flightdesk.fr" class="btn btn-primary btn-sm header-cta" target="_blank" rel="noopener noreferrer">Se connecter</a>
   </div>
-  <a href="https://docs.google.com/forms/d/e/1FAIpQLSeAzRhdghZqplhfhZcYypTNL2aP4pqBozRb-XDa2KSsq0PeKA/viewform" target="_blank" rel="noopener noreferrer" class="nav-cta">Prendre son siège</a>
-</nav>
+</header>
 
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-media" aria-hidden="true">
-    <iframe
-      src="jet-animation.html?embed=1"
-      title="Animation FlightDesk"
-      loading="eager"
-      tabindex="-1"
-      referrerpolicy="strict-origin-when-cross-origin"
-    ></iframe>
-    <div class="hero-media-shield" aria-hidden="true"></div>
-  </div>
-  <div class="hero-bottom-fade" aria-hidden="true"></div>
-
-  <div class="hero-inner">
-    <div class="hero-copy">
-      <p class="hero-beta-badge">Beta Programme – Accès limité</p>
-      <h1>On ne vend pas<br>de l'IA qui répond.</h1>
-      <p class="hero-sub">On ne vend pas de l'IA qui répond. On vend de l'IA qui fait voler l'exécution.</p>
-      <div class="hero-cta-row">
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSeAzRhdghZqplhfhZcYypTNL2aP4pqBozRb-XDa2KSsq0PeKA/viewform" target="_blank" rel="noopener noreferrer" class="btn-primary">
-          Prendre son siège <span class="arrow">→</span>
-        </a>
-      </div>
+<main>
+  <section id="hero" class="hero">
+    <div class="hero-media" aria-hidden="true">
+      <iframe
+        src="jet-animation.html?embed=1"
+        title="Animation FlightDesk"
+        loading="eager"
+        tabindex="-1"
+        referrerpolicy="strict-origin-when-cross-origin"
+      ></iframe>
+      <div class="hero-media-shield" aria-hidden="true"></div>
     </div>
-  </div>
-
-  <div class="hero-scroll-hint" aria-hidden="true">
-    <div class="scroll-line"></div>
-  </div>
-</section>
-
-<!-- MANIFESTE -->
-<section id="manifeste" class="fade-up">
-  <div class="manifeste-header">
-    <div>
-      <div class="section-label">Manifeste</div>
-      <h2 class="section-title">Trois phases.<br>Zéro improvisation.</h2>
-    </div>
-    <p class="section-body">Comme un pilote qui ne vole pas à vue mais aux instruments, FlightDesk donne à vos équipes des agents IA qui exécutent avec la rigueur d'un cockpit d'avion.</p>
-  </div>
-  <div class="phases-grid">
-    <div class="phase-card">
-      <span class="phase-watermark" aria-hidden="true">01</span>
-      <div class="phase-icon" aria-hidden="true">
-        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="6" width="24" height="28" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M12 14h16M12 20h12M12 26h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </div>
-      <div class="phase-num">Phase 01 · Pré-vol</div>
-      <div class="phase-title">Préparer</div>
-      <p class="phase-body">Objectifs, contraintes, checklists. On ne décolle pas sans prérequis. Chaque workflow est cadré, validé, autorisé avant exécution.</p>
-    </div>
-    <div class="phase-card">
-      <span class="phase-watermark" aria-hidden="true">02</span>
-      <div class="phase-icon" aria-hidden="true">
-        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="14" stroke="currentColor" stroke-width="1.5"/><path d="M18 14l8 6-8 6V14z" fill="currentColor"/></svg>
-      </div>
-      <div class="phase-num">Phase 02 · En vol</div>
-      <div class="phase-title">Exécuter</div>
-      <p class="phase-body">L'agent exécute. Autonomie supervisée. L'humain reste aux commandes, pas dans les détails, mais en maîtrise. Données en temps réel.</p>
-    </div>
-    <div class="phase-card">
-      <span class="phase-watermark" aria-hidden="true">03</span>
-      <div class="phase-icon" aria-hidden="true">
-        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 28l6-8 6 6 8-12 6 6v8H8v-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M8 32h28" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </div>
-      <div class="phase-num">Phase 03 · Post-vol</div>
-      <div class="phase-title">Améliorer</div>
-      <p class="phase-body">Boîte noire, RETEX, amélioration continue. Chaque exécution est tracée. Chaque décision est auditable. Le système apprend.</p>
-    </div>
-  </div>
-</section>
-
-<!-- INSTRUMENTS -->
-<section id="instruments" class="fade-up">
-  <div class="instruments-intro">
-    <div>
-      <div class="section-label">Instruments de bord</div>
-      <h2 class="section-title">Six systèmes.<br>Un cockpit.</h2>
-    </div>
-    <p class="section-body">Pas d'intuition. Des instruments. Chaque fonctionnalité est conçue pour donner une vision précise et fiable de l'exécution en cours.</p>
-  </div>
-  <div class="instruments-grid">
-
-    <div class="instr-card">
-      <div class="instr-card-head">
-        <span class="instr-id">FD-01</span>
-        <span class="instr-status-pill">Opérationnel</span>
-      </div>
-      <div class="instr-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="16" cy="16" r="12" stroke="currentColor" stroke-width="1.5"/>
-          <circle cx="16" cy="16" r="4" fill="currentColor" opacity="0.22"/>
-          <circle cx="16" cy="16" r="2" fill="currentColor"/>
-          <line x1="16" y1="4" x2="16" y2="8" stroke="currentColor" stroke-width="1.5"/>
-          <line x1="16" y1="24" x2="16" y2="28" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
-          <line x1="4" y1="16" x2="8" y2="16" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
-          <line x1="24" y1="16" x2="28" y2="16" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
-        </svg>
-      </div>
-      <div class="instr-title">Autonomie supervisée</div>
-      <p class="instr-body">Les agents opèrent dans une enveloppe d'autorisation définie. Chaque action est bornée, chaque dépassement est bloqué.</p>
-    </div>
-
-    <div class="instr-card">
-      <div class="instr-card-head">
-        <span class="instr-id">FD-02</span>
-        <span class="instr-status-pill">Opérationnel</span>
-      </div>
-      <div class="instr-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="2" y="8" width="28" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
-          <line x1="2" y1="16" x2="30" y2="16" stroke="currentColor" stroke-width="1" opacity="0.4"/>
-          <line x1="10" y1="8" x2="10" y2="24" stroke="currentColor" stroke-width="1" opacity="0.35"/>
-          <line x1="22" y1="8" x2="22" y2="24" stroke="currentColor" stroke-width="1" opacity="0.35"/>
-          <circle cx="16" cy="16" r="3" stroke="currentColor" stroke-width="1.5"/>
-          <line x1="16" y1="8" x2="16" y2="13" stroke="currentColor" stroke-width="2"/>
-        </svg>
-      </div>
-      <div class="instr-title">Vol aux instruments</div>
-      <p class="instr-body">Des indicateurs fiables, pas d'intuition. Chaque métrique est sourcée, vérifiée, affichée en temps réel. Décisions basées sur des faits.</p>
-    </div>
-
-    <div class="instr-card">
-      <div class="instr-card-head">
-        <span class="instr-id">FD-03</span>
-        <span class="instr-status-pill">Opérationnel</span>
-      </div>
-      <div class="instr-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="4" y="4" width="24" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/>
-          <line x1="8" y1="10" x2="24" y2="10" stroke="currentColor" stroke-width="1" opacity="0.55"/>
-          <line x1="8" y1="14" x2="20" y2="14" stroke="currentColor" stroke-width="1" opacity="0.55"/>
-          <line x1="8" y1="18" x2="22" y2="18" stroke="currentColor" stroke-width="1" opacity="0.55"/>
-          <line x1="8" y1="22" x2="16" y2="22" stroke="currentColor" stroke-width="1" opacity="0.55"/>
-          <circle cx="24" cy="22" r="4" fill="currentColor" opacity="0.12" stroke="currentColor" stroke-width="1.5"/>
-          <circle cx="24" cy="22" r="1.5" fill="currentColor"/>
-        </svg>
-      </div>
-      <div class="instr-title">Boîte noire</div>
-      <p class="instr-body">Journalisation complète de chaque décision, chaque action, chaque résultat. Audit trail complet. Conformité native, rien à paramétrer.</p>
-    </div>
-
-    <div class="instr-card">
-      <div class="instr-card-head">
-        <span class="instr-id">FD-04</span>
-        <span class="instr-status-pill">Opérationnel</span>
-      </div>
-      <div class="instr-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16 4L28 26H4L16 4Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-          <line x1="16" y1="12" x2="16" y2="18" stroke="currentColor" stroke-width="2"/>
-          <circle cx="16" cy="22" r="1.5" fill="currentColor"/>
-        </svg>
-      </div>
-      <div class="instr-title">CHICA automatique</div>
-      <p class="instr-body">Détection d'anomalie en temps réel. Dès qu'une déviation est identifiée, le système corrige, alerte ou stoppe, avant que le problème ne se propage.</p>
-    </div>
-
-    <div class="instr-card">
-      <div class="instr-card-head">
-        <span class="instr-id">FD-05</span>
-        <span class="instr-status-pill">Opérationnel</span>
-      </div>
-      <div class="instr-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="16" cy="16" r="12" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
-          <circle cx="16" cy="16" r="8" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
-          <circle cx="16" cy="16" r="4" stroke="currentColor" stroke-width="1.5"/>
-          <circle cx="16" cy="16" r="1.5" fill="currentColor"/>
-          <line x1="16" y1="4" x2="16" y2="10" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 3"/>
-        </svg>
-      </div>
-      <div class="instr-title">Anticipation</div>
-      <p class="instr-body">Alertes proactives avant les problèmes. Le système modélise les risques en amont et notifie les équipes avec suffisamment d'avance pour agir.</p>
-    </div>
-
-    <div class="instr-card">
-      <div class="instr-card-head">
-        <span class="instr-id">FD-06</span>
-        <span class="instr-status-pill">Opérationnel</span>
-      </div>
-      <div class="instr-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="6" y="14" width="20" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M10 14V10a6 6 0 0 1 12 0v4" stroke="currentColor" stroke-width="1.5" fill="none"/>
-          <circle cx="16" cy="21" r="2.5" stroke="currentColor" stroke-width="1.5"/>
-          <line x1="16" y1="23.5" x2="16" y2="26" stroke="currentColor" stroke-width="1.5"/>
-        </svg>
-      </div>
-      <div class="instr-title">Conformité native</div>
-      <p class="instr-body">RGPD intégré dès l'architecture, pas en option. Souveraineté des données, isolation des traitements, droit à l'oubli, par design.</p>
-    </div>
-
-  </div>
-</section>
-
-<!-- ÉQUIPAGE -->
-<section id="equipage" class="fade-up">
-  <div class="equipage-intro">
-    <div class="section-label">Équipage</div>
-    <h2 class="section-title">Aux commandes</h2>
-  </div>
-  <div class="team-grid">
-    <div class="team-card">
-      <div class="team-card-top">
-        <div class="team-avatar" aria-hidden="true">PL</div>
-        <div class="team-meta">
-          <span class="team-role-pill">Pilote</span>
-          <div class="team-name">Paul Laisne</div>
-          <div class="team-role-detail">Architecture &amp; Engineering</div>
+    <div class="hero-bottom-fade" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <h1>Vos agents IA travaillent. Vous pilotez.</h1>
+        <p class="hero-sub">Le cockpit IA qui pilote votre entreprise pendant que vous la dirigez.</p>
+        <div class="hero-cta-row">
+          <a href="#solution" class="btn btn-primary">Découvrir FlightDesk</a>
+          <a href="contact.html" class="btn btn-secondary">Nous contacter</a>
         </div>
       </div>
-      <p class="team-desc">Architecte des systèmes d'exécution IA. En charge de la rigueur technique qui fait tenir l'enveloppe de vol.</p>
-      <a href="https://www.linkedin.com/in/paul-laisné/" target="_blank" rel="noopener noreferrer" class="team-linkedin">
-        LinkedIn
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      </a>
-    </div>
-    <div class="team-card">
-      <div class="team-card-top">
-        <div class="team-avatar" aria-hidden="true">YB</div>
-        <div class="team-meta">
-          <span class="team-role-pill">Copilote</span>
-          <div class="team-name">Yannick Bardie</div>
-          <div class="team-role-detail">Go-to-Market &amp; Produit</div>
-        </div>
-      </div>
-      <p class="team-desc">Stratégie produit et mise sur le marché. En charge des opérations commerciales et du cap à tenir.</p>
-      <a href="https://www.linkedin.com/in/yannickbardie/" target="_blank" rel="noopener noreferrer" class="team-linkedin">
-        LinkedIn
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- CTA FINAL -->
-<div class="cta-wrap fade-up">
-  <section id="cta-final">
-    <div class="cta-tag">Accès beta · Places limitées</div>
-    <h2 class="section-title">Prêt à embarquer ?</h2>
-    <p class="section-body">Beta ouverte aux entreprises sélectionnées. Accès direct à l'équipe fondatrice.</p>
-    <div class="cta-final-row">
-      <a href="https://docs.google.com/forms/d/e/1FAIpQLSeAzRhdghZqplhfhZcYypTNL2aP4pqBozRb-XDa2KSsq0PeKA/viewform" target="_blank" rel="noopener noreferrer" class="btn-primary btn-light" style="font-size:16px;padding:18px 36px;">
-        Prendre son siège <span class="arrow">→</span>
-      </a>
-      <div class="limited-seats">Accès sur candidature</div>
     </div>
   </section>
-</div>
 
-<!-- FOOTER -->
+  <section id="contexte" class="section-alt fade-up">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Le contexte</div>
+        <h2 class="section-title">La technologie avance. Vos opérations doivent suivre.</h2>
+      </div>
+      <div class="stats-grid stagger-children">
+        <div class="stat-card">
+          <div class="stat-value">142 jours/an</div>
+          <div class="stat-label">perdus en tâches à faible valeur par les dirigeants</div>
+          <div class="stat-source">Source : Sage / GPO Magazine</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">28&nbsp;%</div>
+          <div class="stat-label">des dirigeants passent au moins 2 jours par semaine sur l'administratif</div>
+          <div class="stat-source">Source : CPME 2025</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">34&nbsp;%</div>
+          <div class="stat-label">des entreprises utilisent l'IA, contre 13&nbsp;% l'an dernier</div>
+          <div class="stat-source">Source : Baromètre France Num 2025</div>
+        </div>
+      </div>
+      <div class="highlight-box fade-up">
+        <h3>L'IA change le jeu maintenant</h3>
+        <ul class="highlight-list">
+          <li>Adoption en hausse de plus de 50&nbsp;% en 2025</li>
+          <li>Avantage concurrentiel pour les early adopters</li>
+          <li>ROI médian de 159&nbsp;% sur 24 mois pour les projets IA bien définis</li>
+          <li>Ceux qui attendent laissent leurs concurrents avancer</li>
+        </ul>
+        <p class="highlight-source">Source : Deloitte / Baromètre IA &amp; ROI 2022-2025</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="solution" class="section fade-up">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">La solution</div>
+        <h2 class="section-title">Votre cockpit opérationnel.</h2>
+        <p class="section-lead">Des agents IA autonomes travaillent en arrière-plan. Vous supervisez, validez, décidez.</p>
+      </div>
+      <div class="cards-grid cols-3 stagger-children">
+        <article class="card">
+          <h3>Configurable</h3>
+          <p>Chaque agent est paramétré selon vos process. Pas un outil générique : votre cockpit, vos règles.</p>
+        </article>
+        <article class="card">
+          <h3>Supervisable</h3>
+          <p>Vous validez les actions critiques. L'IA exécute, vous pilotez. Human-in-the-loop intégré.</p>
+        </article>
+        <article class="card">
+          <h3>Évolutif</h3>
+          <p>Ajoutez autant de modules et d'agents que vos besoins le réclament. L'architecture s'adapte à vous.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="agents" class="section-alt fade-up">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Agents et modules</div>
+        <h2 class="section-title">Des agents spécialisés. Des modules sans limite.</h2>
+        <p class="section-lead">Activez les agents dont vous avez besoin. Ajoutez autant de modules que votre activité l'exige.</p>
+      </div>
+      <div class="cards-grid cols-3 stagger-children">
+        <article class="card">
+          <div class="card-icon">Email</div>
+          <h3>Agent Email</h3>
+          <p>Triage, classification et brouillons de réponse automatiques.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">SAV</div>
+          <h3>Agent SAV</h3>
+          <p>Priorisation des demandes, escalade et suivi des incidents.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">Supply</div>
+          <h3>Agent Supply</h3>
+          <p>Alertes stock, relances fournisseurs et visibilité en temps réel.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">Rpt</div>
+          <h3>Agent Reporting</h3>
+          <p>Synthèses opérationnelles livrées chaque matin.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">CRM</div>
+          <h3>Module CRM</h3>
+          <p>Suivi des prospects, relances automatiques et pipeline actualisé.</p>
+        </article>
+        <article class="card card-featured">
+          <div class="card-icon">+</div>
+          <h3>Modules sur mesure</h3>
+          <p>Chaque besoin spécifique devient un module dédié, ajouté sans limite.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="pourquoi" class="section fade-up">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Différenciateurs</div>
+        <h2 class="section-title">Pourquoi FlightDesk ?</h2>
+      </div>
+      <div class="cards-grid cols-2 stagger-children">
+        <article class="card">
+          <h3>Solution française</h3>
+          <p>Équipe, développement et support en France. Pas un outil américain traduit.</p>
+        </article>
+        <article class="card">
+          <h3>Données en Europe</h3>
+          <p>Hébergement GCP européen, RGPD natif. Aucun transfert hors Union européenne.</p>
+        </article>
+        <article class="card">
+          <h3>Pas un chatbot</h3>
+          <p>De vrais agents IA autonomes qui exécutent des tâches avec le contexte de votre entreprise.</p>
+        </article>
+        <article class="card">
+          <h3>Gouvernance humaine</h3>
+          <p>L'IA exécute, vous décidez. Les actions critiques passent toujours par vous. Cockpit, pas pilote automatique.</p>
+        </article>
+        <article class="card">
+          <h3>Intégrations natives</h3>
+          <p>Gmail, Notion, Slack, LinkedIn, CRM : vos outils restent, FlightDesk les orchestre.</p>
+        </article>
+        <article class="card">
+          <h3>Accompagnement personnalisé</h3>
+          <p>Audit, déploiement, formation, itération. On avance à votre rythme, module par module.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-violet fade-up">
+    <div class="container">
+      <h2 class="section-title">Prêts à décoller ?</h2>
+      <a href="contact.html" class="btn btn-white">Nous contacter</a>
+    </div>
+  </section>
+</main>
+
 <footer class="site-footer">
-  <a class="footer-brand" href="#hero">
-    <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="#9591b0"/></svg>
-    FlightDesk
-  </a>
-  <span class="footer-copy">© 2026 · Cockpit numérique pour agents IA</span>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="index.html">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="currentColor"/></svg>
+          FlightDesk
+        </a>
+        <p class="footer-tagline">Le cockpit IA de votre entreprise</p>
+      </div>
+      <div class="footer-links">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="services.html">Nos services</a></li>
+          <li><a href="securite.html">Vos données</a></li>
+          <li><a href="equipe.html">L'équipage</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Légal</h4>
+        <ul>
+          <li><a href="#">Mentions légales</a></li>
+          <li><a href="#">CGV</a></li>
+          <li><a href="#">Politique de confidentialité</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:contact@flightdesk.fr">contact@flightdesk.fr</a></li>
+          <li><a href="https://flightdesk.fr" target="_blank" rel="noopener noreferrer">flightdesk.fr</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 FlightDesk. Solution française.</span>
+    </div>
+  </div>
 </footer>
 
-
-
-<script>
-/* Scroll reveal: sections */
-const revealSections = document.querySelectorAll('.fade-up');
-const sectionObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('is-inview');
-      sectionObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.1 });
-revealSections.forEach((el) => sectionObserver.observe(el));
-
-/* Tweaks (éditeur intégré) */
-const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "accentColor": "#7c3aed",
-  "heroTitle": "On ne vend pas<br>de l'IA qui répond."
-}/*EDITMODE-END*/;
-
-let tweakValues = { ...TWEAK_DEFAULTS };
-
-function applyTweaks(v) {
-  document.documentElement.style.setProperty('--accent', v.accentColor);
-  document.documentElement.style.setProperty('--text-accent', v.accentColor);
-  const el = document.querySelector('#hero h1');
-  if (el) el.innerHTML = v.heroTitle;
-}
-
-applyTweaks(tweakValues);
-
-const tweakPanel = document.createElement('div');
-tweakPanel.id = 'tweaks-panel';
-tweakPanel.style.cssText = `
-  display:none; position:fixed; bottom:24px; right:24px; z-index:9999;
-  background:#fff; border:1px solid rgba(0,0,0,0.08); box-shadow:0 8px 30px rgba(0,0,0,0.1);
-  padding:24px; width:280px; font-family:'DM Sans',sans-serif; border-radius:12px;
-`;
-tweakPanel.innerHTML = `
-  <div style="font-size:11px;letter-spacing:0.12em;color:#7c3aed;text-transform:uppercase;margin-bottom:16px;font-weight:600;">Tweaks</div>
-  <label style="display:block;font-size:11px;color:#9591b0;margin-bottom:6px;">Couleur accent</label>
-  <input type="color" id="tw-accent" style="width:100%;height:36px;border:none;background:none;cursor:pointer;margin-bottom:16px;">
-  <label style="display:block;font-size:11px;color:#9591b0;margin-bottom:6px;">Titre hero (HTML)</label>
-  <input type="text" id="tw-title" style="width:100%;background:#f8f8fb;border:1px solid rgba(0,0,0,0.07);color:#0f0d1a;padding:8px;font-family:inherit;font-size:12px;border-radius:6px;">
-`;
-document.body.appendChild(tweakPanel);
-tweakPanel.querySelector('#tw-accent').value = tweakValues.accentColor;
-tweakPanel.querySelector('#tw-title').value = tweakValues.heroTitle;
-
-tweakPanel.querySelector('#tw-accent').addEventListener('input', (e) => {
-  tweakValues.accentColor = e.target.value;
-  applyTweaks(tweakValues);
-  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: tweakValues }, '*');
-});
-tweakPanel.querySelector('#tw-title').addEventListener('input', (e) => {
-  tweakValues.heroTitle = e.target.value;
-  applyTweaks(tweakValues);
-  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: tweakValues }, '*');
-});
-
-window.addEventListener('message', (e) => {
-  if (e.data?.type === '__activate_edit_mode') tweakPanel.style.display = 'block';
-  if (e.data?.type === '__deactivate_edit_mode') tweakPanel.style.display = 'none';
-});
-window.parent.postMessage({ type: '__edit_mode_available' }, '*');
-</script>
-
+<script src="main.js"></script>
 </body>
 </html>
