@@ -179,6 +179,24 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (window.Babel && typeof window.Babel.transformScriptTags === 'function') {
       window.Babel.transformScriptTags();
     }
+
+    const embedStyle = document.createElement('style');
+    embedStyle.id = 'fd-embed';
+    embedStyle.textContent = [
+      '.scrub,.hud{display:none!important;visibility:hidden!important}',
+      '#stage{align-items:stretch!important;justify-content:stretch!important}',
+      '.frame{width:100%!important;height:100%!important;max-width:none!important;aspect-ratio:unset!important;box-shadow:none!important}',
+      '#cv,canvas{width:100%!important;height:100%!important;display:block!important}',
+      'html,body,#stage{overflow:hidden!important;margin:0!important;height:100%!important}',
+      'body{background:#000!important}',
+      '*{cursor:default!important;user-select:none!important}',
+      'button,.scrub *{pointer-events:none!important}'
+    ].join('');
+    document.head.appendChild(embedStyle);
+    const thumb = document.getElementById('__bundler_thumbnail');
+    const loadEl = document.getElementById('__bundler_loading');
+    if (thumb) thumb.remove();
+    if (loadEl) loadEl.remove();
   } catch (err) {
     setStatus('Error unpacking: ' + err.message);
     console.error('Bundle unpack error:', err);
