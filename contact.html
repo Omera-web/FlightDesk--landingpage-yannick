@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact | FlightDesk</title>
-  <meta name="description" content="Contactez FlightDesk. Réponse sous 24h. Formulaire ou rendez-vous téléphonique.">
+  <meta name="description" content="Contactez FlightDesk pour discuter de votre projet. Réponse sous 48h.">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,53 +40,128 @@
   <section class="page-hero fade-up">
     <div class="container">
       <div class="section-label">Contact</div>
-      <h1 class="section-title">Prêts à décoller ?</h1>
+      <h1 class="section-title">Parlons de votre projet.</h1>
     </div>
   </section>
 
-  <section class="section fade-up">
+  <section class="section contact-section fade-up">
     <div class="container">
-      <div class="contact-layout">
-        <form class="contact-form" action="#" method="post">
+      <!-- Affiché après redirection Formspree (?sent=1) -->
+      <div id="contact-success" class="contact-success" hidden role="status" aria-live="polite">
+        <div class="contact-success-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="contact-success-title">Merci !</h2>
+          <p class="contact-success-text">Votre message a bien été envoyé. On revient vers vous sous 48h.</p>
+        </div>
+      </div>
+
+      <div id="contact-form-wrap" class="contact-layout">
+        <!--
+          Formspree : créer un compte sur https://formspree.io,
+          créer un formulaire, puis remplacer xplaceholder par votre ID (ex. xyzabcde).
+        -->
+        <form
+          class="contact-form contact-card"
+          action="https://formspree.io/f/xplaceholder"
+          method="POST"
+        >
+          <input type="hidden" name="_next" id="form-next" value="">
+          <input type="hidden" name="_subject" value="Nouvelle demande — FlightDesk">
+
           <div class="form-row">
-            <div class="form-group">
-              <label for="nom">Nom</label>
-              <input type="text" id="nom" name="nom" required autocomplete="family-name">
-            </div>
             <div class="form-group">
               <label for="prenom">Prénom</label>
               <input type="text" id="prenom" name="prenom" required autocomplete="given-name">
             </div>
+            <div class="form-group">
+              <label for="nom">Nom</label>
+              <input type="text" id="nom" name="nom" required autocomplete="family-name">
+            </div>
           </div>
+
           <div class="form-group">
-            <label for="email">Email</label>
+            <label for="email">Email professionnel</label>
             <input type="email" id="email" name="email" required autocomplete="email">
           </div>
-          <div class="form-group">
-            <label for="entreprise">Entreprise</label>
-            <input type="text" id="entreprise" name="entreprise" required autocomplete="organization">
-          </div>
+
           <div class="form-group">
             <label for="telephone">Téléphone <span class="form-hint">(optionnel)</span></label>
             <input type="tel" id="telephone" name="telephone" autocomplete="tel">
           </div>
+
           <div class="form-group">
-            <label for="message">Message</label>
-            <textarea id="message" name="message" required></textarea>
+            <label for="entreprise">Nom de l'entreprise</label>
+            <input type="text" id="entreprise" name="entreprise" required autocomplete="organization">
           </div>
-          <button type="button" class="btn btn-primary">Envoyer</button>
+
+          <div class="form-group">
+            <label for="secteur">Secteur d'activité</label>
+            <div class="select-wrap">
+              <select id="secteur" name="secteur" required>
+                <option value="" disabled selected>Sélectionnez un secteur</option>
+                <option value="Industrie">Industrie</option>
+                <option value="Immobilier">Immobilier</option>
+                <option value="Automobile">Automobile</option>
+                <option value="Construction">Construction</option>
+                <option value="Distribution alimentaire">Distribution alimentaire</option>
+                <option value="Santé">Santé</option>
+                <option value="Finance">Finance</option>
+                <option value="Autre">Autre</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="besoin">Quel est votre besoin ?</label>
+            <textarea id="besoin" name="besoin" required placeholder="Décrivez votre projet ou vos enjeux actuels..."></textarea>
+          </div>
+
+          <fieldset class="form-group form-fieldset">
+            <legend>Quel est votre horizon ?</legend>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="horizon" value="Dès que possible" required>
+                <span class="radio-ui"></span>
+                <span>Dès que possible</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="horizon" value="Dans les 3 prochains mois">
+                <span class="radio-ui"></span>
+                <span>Dans les 3 prochains mois</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="horizon" value="Dans 6 mois ou plus">
+                <span class="radio-ui"></span>
+                <span>Dans 6 mois ou plus</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="horizon" value="Je me renseigne">
+                <span class="radio-ui"></span>
+                <span>Je me renseigne</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <button type="submit" class="btn btn-primary">Envoyer</button>
         </form>
 
-        <aside class="contact-aside">
+        <aside class="contact-aside contact-card">
+          <h2 class="contact-aside-title">Autres moyens de nous joindre</h2>
           <div class="contact-block">
-            <p>On revient vers vous sous 24h.</p>
-            <a href="mailto:contact@flightdesk.fr" class="contact-email">contact@flightdesk.fr</a>
+            <p class="contact-block-label">Email</p>
+            <!-- Remplacer par contact@flightdesk.fr lorsque la boîte est active -->
+            <a href="mailto:pl.laisne@gmail.com" class="contact-email">pl.laisne@gmail.com</a>
           </div>
           <div class="contact-block">
             <h3>Vous préférez un appel ?</h3>
-            <p>Réservez un créneau avec l'équipe.</p>
+            <p>Réservez un créneau de 30 minutes pour discuter de votre projet.</p>
             <a href="#" class="btn btn-secondary">Réserver un créneau</a>
           </div>
+          <p class="contact-rgpd">Vos données sont traitées conformément au RGPD. Elles servent uniquement à traiter votre demande.</p>
         </aside>
       </div>
     </div>
@@ -120,13 +195,6 @@
           <li><a href="#">Politique de confidentialité</a></li>
         </ul>
       </div>
-      <div class="footer-links">
-        <h4>Contact</h4>
-        <ul>
-          <li><a href="mailto:contact@flightdesk.fr">contact@flightdesk.fr</a></li>
-          <li><a href="https://flightdesk.fr" target="_blank" rel="noopener noreferrer">flightdesk.fr</a></li>
-        </ul>
-      </div>
     </div>
     <div class="footer-bottom">
       <span>© 2026 FlightDesk. Solution française.</span>
@@ -135,5 +203,19 @@
 </footer>
 
 <script src="main.js"></script>
+<script>
+(function () {
+  var next = document.getElementById('form-next');
+  if (next) {
+    next.value = window.location.href.split('?')[0] + '?sent=1';
+  }
+  if (new URLSearchParams(window.location.search).get('sent') === '1') {
+    var success = document.getElementById('contact-success');
+    var wrap = document.getElementById('contact-form-wrap');
+    if (success) success.hidden = false;
+    if (wrap) wrap.hidden = true;
+  }
+})();
+</script>
 </body>
 </html>
