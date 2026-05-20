@@ -454,13 +454,14 @@ img {
 
 .hero-media iframe {
   position: absolute;
-  top: 50%;
+  top: 0;
   left: 50%;
   width: 100vw;
   height: 100vh;
   min-width: 177.78vh;
   min-height: 56.25vw;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
+  transform-origin: top center;
   border: 0;
   pointer-events: none;
 }
@@ -1049,6 +1050,12 @@ img {
 
 .site-footer .brand svg {
   color: var(--accent-light);
+}
+
+.site-footer .logo img {
+  height: 36px;
+  width: auto;
+  filter: none;
 }
 
 .footer-grid {
