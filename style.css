@@ -95,6 +95,24 @@ img {
   padding: 0 24px;
 }
 
+.logo {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.logo img {
+  display: block;
+  height: 38px;
+  width: auto;
+  transition: filter 0.3s ease;
+}
+
+.site-header.is-scrolled .logo img {
+  filter: brightness(0);
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -109,11 +127,6 @@ img {
 .brand svg {
   flex-shrink: 0;
   transition: color 0.35s ease;
-}
-
-.page-home .site-header:not(.is-scrolled) .brand,
-.page-home .site-header:not(.is-scrolled) .brand svg {
-  color: #fff;
 }
 
 .page-home .site-header:not(.is-scrolled) .nav-list a {
@@ -138,6 +151,10 @@ img {
 
 .site-header.is-scrolled .brand svg {
   color: var(--accent);
+}
+
+.page-inner .site-header .logo img {
+  filter: brightness(0);
 }
 
 .nav-toggle {
