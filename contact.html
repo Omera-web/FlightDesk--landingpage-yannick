@@ -46,26 +46,12 @@
 
   <section class="section contact-section fade-up">
     <div class="container">
-      <!-- Affiché après redirection Formspree (?sent=1) -->
-      <div id="contact-success" class="contact-success" hidden role="status" aria-live="polite">
-        <div class="contact-success-icon" aria-hidden="true">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div>
-          <h2 class="contact-success-title">Merci !</h2>
-          <p class="contact-success-text">Votre message a bien été envoyé. On revient vers vous sous 48h.</p>
-        </div>
-      </div>
-
       <div id="contact-form-wrap">
         <form
           class="contact-form contact-card"
           action="https://formspree.io/f/xvzykkyl"
           method="POST"
         >
-          <input type="hidden" name="_next" id="form-next" value="">
           <input type="hidden" name="_subject" value="Nouvelle demande — FlightDesk">
 
           <div class="form-row">
@@ -184,19 +170,5 @@
 </footer>
 
 <script src="main.js"></script>
-<script>
-(function () {
-  var next = document.getElementById('form-next');
-  if (next) {
-    next.value = window.location.href.split('?')[0] + '?sent=1';
-  }
-  if (new URLSearchParams(window.location.search).get('sent') === '1') {
-    var success = document.getElementById('contact-success');
-    var wrap = document.getElementById('contact-form-wrap');
-    if (success) success.hidden = false;
-    if (wrap) wrap.hidden = true;
-  }
-})();
-</script>
 </body>
 </html>
