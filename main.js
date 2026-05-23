@@ -3,8 +3,52 @@
 
   var header = document.querySelector('.site-header');
   var hero = document.querySelector('.hero');
+  var heroMedia = document.querySelector('.hero-media');
   var toggle = document.querySelector('.nav-toggle');
   var nav = document.querySelector('.site-nav');
+  var heroIframe = null;
+  var heroShield = heroMedia ? heroMedia.querySelector('.hero-media-shield') : null;
+
+  var widthQuery = window.matchMedia('(min-width: 768px)');
+  var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function shouldLoadHeroAnimation() {
+    return widthQuery.matches && !motionQuery.matches;
+  }
+
+  function syncHeroAnimation() {
+    if (!heroMedia || !hero) return;
+
+    if (shouldLoadHeroAnimation()) {
+      if (!heroIframe) {
+        heroIframe = document.createElement('iframe');
+        heroIframe.src = 'jet-animation.html?embed=1&v=3';
+        heroIframe.title = 'Animation FlightDesk';
+        heroIframe.loading = 'eager';
+        heroIframe.tabIndex = -1;
+        heroIframe.referrerPolicy = 'strict-origin-when-cross-origin';
+        heroMedia.insertBefore(heroIframe, heroShield);
+      }
+      hero.classList.add('hero--animated');
+    } else {
+      if (heroIframe) {
+        heroIframe.remove();
+        heroIframe = null;
+      }
+      hero.classList.remove('hero--animated');
+    }
+  }
+
+  if (heroMedia) {
+    syncHeroAnimation();
+    if (typeof widthQuery.addEventListener === 'function') {
+      widthQuery.addEventListener('change', syncHeroAnimation);
+      motionQuery.addEventListener('change', syncHeroAnimation);
+    } else {
+      widthQuery.addListener(syncHeroAnimation);
+      motionQuery.addListener(syncHeroAnimation);
+    }
+  }
 
   if (header) {
     if (!hero) {
@@ -19,19 +63,23 @@
     }
   }
 
+  function setNavOpen(open) {
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    document.body.classList.toggle('nav-open', open);
+    if (open && header && !header.classList.contains('is-scrolled')) {
+      header.classList.add('is-scrolled');
+    }
+  }
+
   if (toggle && nav) {
     toggle.addEventListener('click', function () {
-      var open = nav.classList.toggle('is-open');
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      if (open && header && !header.classList.contains('is-scrolled')) {
-        header.classList.add('is-scrolled');
-      }
+      setNavOpen(!nav.classList.contains('is-open'));
     });
 
     nav.querySelectorAll('a').forEach(function (link) {
       link.addEventListener('click', function () {
-        nav.classList.remove('is-open');
-        toggle.setAttribute('aria-expanded', 'false');
+        setNavOpen(false);
       });
     });
   }
