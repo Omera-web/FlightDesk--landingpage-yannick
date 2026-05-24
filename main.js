@@ -48,6 +48,7 @@
       widthQuery.addListener(syncHeroAnimation);
       motionQuery.addListener(syncHeroAnimation);
     }
+    window.addEventListener('orientationchange', syncHeroAnimation);
   }
 
   if (header) {
@@ -64,6 +65,7 @@
   }
 
   function setNavOpen(open) {
+    if (!nav || !toggle) return;
     nav.classList.toggle('is-open', open);
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     document.body.classList.toggle('nav-open', open);
