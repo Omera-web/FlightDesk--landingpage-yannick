@@ -7,8 +7,7 @@ Site statique multi-pages (HTML, CSS, JS).
 - `index.html` — Accueil (hero avec animation jet)
 - `services.html` — Nos services
 - `securite.html` — Vos données
-- `equipe.html` — L'équipage
-- `contact.html` — Contact
+- `contact.html` — Contact (Dr. Yannick Bardie, Intelligence In Life)
 
 ## Fichiers partagés
 
