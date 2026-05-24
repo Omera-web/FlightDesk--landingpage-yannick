@@ -69,9 +69,6 @@
     nav.classList.toggle('is-open', open);
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     document.body.classList.toggle('nav-open', open);
-    if (open && header && !header.classList.contains('is-scrolled')) {
-      header.classList.add('is-scrolled');
-    }
   }
 
   if (toggle && nav) {
